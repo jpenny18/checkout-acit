@@ -343,9 +343,6 @@ function CheckoutForm({ selectedBalance, onBack }) {
       setShowCryptoPayment(true);
     } else {
       const stripeLink = STRIPE_LINKS[selectedBalance][fastPassSelected ? 'fastPass' : 'standard'];
-      console.log('Selected balance:', selectedBalance);
-      console.log('Fast Pass:', fastPassSelected);
-      console.log('Stripe Link:', stripeLink);
       
       if (!stripeLink) {
         alert('Payment link not found. Please try again or contact support.');
@@ -354,10 +351,21 @@ function CheckoutForm({ selectedBalance, onBack }) {
 
       // Construct the final URL
       const finalUrl = `${stripeLink}?prefilled_email=${encodeURIComponent(formData.email)}&client_reference_id=${orderId}`;
-      console.log('Final URL:', finalUrl);
       
-      // Use window.location.href for redirection
-      window.location.href = finalUrl;
+      // Try to detect if we're in an iframe
+      const isInIframe = window !== window.parent;
+      
+      if (isInIframe) {
+        // If in iframe, try to open in parent window or fall back to new tab
+        try {
+          window.parent.location.href = finalUrl;
+        } catch (e) {
+          window.open(finalUrl, '_blank', 'noopener,noreferrer');
+        }
+      } else {
+        // If not in iframe, redirect normally
+        window.location.href = finalUrl;
+      }
     }
   };
 
