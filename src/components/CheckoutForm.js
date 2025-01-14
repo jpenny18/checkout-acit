@@ -507,7 +507,7 @@ function CheckoutForm({ selectedBalance, onBack }) {
           onChange={(e) => setTermsAccepted(e.target.checked)}
         />
         <label htmlFor="terms">
-          I have read and agree to the <a href="#">Terms & Conditions</a> and <a href="#">Refund/Dispute Policy</a>
+          I have read and agree to the <a href="https://www.ascendantcapital.ca/disclaimer" target="_blank" rel="noopener noreferrer">Terms & Conditions</a> and <a href="https://www.ascendantcapital.ca/refundpolicy" target="_blank" rel="noopener noreferrer">Refund/Dispute Policy</a>
         </label>
       </TermsCheckbox>
 
