@@ -345,7 +345,7 @@ function CheckoutForm({ selectedBalance, onBack }) {
         paymentMethod,
         cryptoDiscount: paymentMethod === 'crypto',
         fastPass: fastPassSelected,
-        cryptoType: paymentMethod === 'crypto' ? null : undefined // Will be updated when user selects crypto
+        cryptoType: null // Set to null for both crypto and card payments initially
       },
       status: 'pending',
       paymentDetails: null
@@ -361,6 +361,11 @@ function CheckoutForm({ selectedBalance, onBack }) {
   };
 
   const handleContinueToPayment = async () => {
+    console.log('Starting payment process...');
+    console.log('Payment method:', paymentMethod);
+    console.log('Selected balance:', selectedBalance);
+    console.log('Fast pass:', fastPassSelected);
+
     const orderId = await saveOrderData();
     if (!orderId) {
       alert('There was an error processing your order. Please try again.');
@@ -368,32 +373,40 @@ function CheckoutForm({ selectedBalance, onBack }) {
     }
 
     setCurrentOrderId(orderId);
+    console.log('Order ID:', orderId);
 
     if (paymentMethod === 'crypto') {
       setShowCryptoPayment(true);
     } else {
       const stripeLink = STRIPE_LINKS[selectedBalance][fastPassSelected ? 'fastPass' : 'standard'];
+      console.log('Stripe link:', stripeLink);
       
       if (!stripeLink) {
+        console.error('Payment link not found:', {
+          selectedBalance,
+          fastPassSelected,
+          availableLinks: STRIPE_LINKS
+        });
         alert('Payment link not found. Please try again or contact support.');
         return;
       }
 
-      // Construct the final URL
       const finalUrl = `${stripeLink}?prefilled_email=${encodeURIComponent(formData.email)}&client_reference_id=${orderId}`;
+      console.log('Final URL:', finalUrl);
       
-      // Try to detect if we're in an iframe
       const isInIframe = window !== window.parent;
+      console.log('Is in iframe:', isInIframe);
       
       if (isInIframe) {
-        // If in iframe, try to open in parent window or fall back to new tab
         try {
+          console.log('Attempting parent window redirect...');
           window.parent.location.href = finalUrl;
         } catch (e) {
+          console.log('Parent redirect failed, opening new tab...', e);
           window.open(finalUrl, '_blank', 'noopener,noreferrer');
         }
       } else {
-        // If not in iframe, redirect normally
+        console.log('Performing direct redirect...');
         window.location.href = finalUrl;
       }
     }

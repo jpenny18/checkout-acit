@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CheckoutForm from './components/CheckoutForm';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
+import TestRunner from './components/TestRunner';
 
 const Container = styled.div`
   background-color: #1a1a1a;
@@ -305,6 +306,12 @@ function App() {
           selectedBalance={selectedBalance} 
           onBack={handleBack}
         />
+      )}
+      
+      {process.env.NODE_ENV === 'development' && (
+        <div style={{ margin: '2rem auto', maxWidth: '800px' }}>
+          <TestRunner />
+        </div>
       )}
     </Container>
   );
