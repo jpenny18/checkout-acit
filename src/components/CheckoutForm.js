@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CryptoPayment from './CryptoPayment';
 import { db } from '../firebase';
@@ -184,6 +184,21 @@ const CheckoutButton = styled.button`
   }
 `;
 
+const LoadingSpinner = styled.div`
+  border: 2px solid #333;
+  border-top: 2px solid #ffc62d;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
 const BackButton = styled.button`
   background: transparent;
   color: #ffc62d;
@@ -275,6 +290,17 @@ function CheckoutForm({ selectedBalance, onBack }) {
   const [showCryptoPayment, setShowCryptoPayment] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState('mt4');
   const [fastPassSelected, setFastPassSelected] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // Add initialization effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const basePrice = selectedBalance === 50000 ? 400 : 
                    selectedBalance === 100000 ? 600 : 999;
@@ -318,14 +344,16 @@ function CheckoutForm({ selectedBalance, onBack }) {
         platform: selectedPlatform,
         paymentMethod,
         cryptoDiscount: paymentMethod === 'crypto',
-        fastPass: fastPassSelected
+        fastPass: fastPassSelected,
+        cryptoType: paymentMethod === 'crypto' ? null : undefined // Will be updated when user selects crypto
       },
-      status: 'pending'
+      status: 'pending',
+      paymentDetails: null
     };
 
     try {
-      await addDoc(collection(db, 'orders'), orderData);
-      return orderId;
+      const docRef = await addDoc(collection(db, 'orders'), orderData);
+      return docRef.id;
     } catch (error) {
       console.error('Error saving order:', error);
       return null;
@@ -338,6 +366,8 @@ function CheckoutForm({ selectedBalance, onBack }) {
       alert('There was an error processing your order. Please try again.');
       return;
     }
+
+    setCurrentOrderId(orderId);
 
     if (paymentMethod === 'crypto') {
       setShowCryptoPayment(true);
@@ -369,10 +399,20 @@ function CheckoutForm({ selectedBalance, onBack }) {
     }
   };
 
+  if (isInitializing) {
+    return (
+      <FormContainer style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <LoadingSpinner />
+        <div style={{ marginTop: '2rem', color: '#999' }}>Loading checkout form...</div>
+      </FormContainer>
+    );
+  }
+
   if (showCryptoPayment) {
     return <CryptoPayment 
       amount={finalAmount} 
-      onBack={() => setShowCryptoPayment(false)} 
+      onBack={() => setShowCryptoPayment(false)}
+      orderId={currentOrderId}
     />;
   }
 

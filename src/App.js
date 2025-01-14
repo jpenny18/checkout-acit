@@ -119,18 +119,34 @@ const PromotionBanner = styled.div`
 const StartButton = styled.button`
   background-color: #ffc62d;
   color: black;
-  padding: 1rem 2rem;
+  padding: 1.2rem;
   border: none;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  width: auto;
-  margin: 2rem auto 0;
+  width: 100%;
+  font-size: 1.1rem;
+  max-width: 400px;
+  margin: 0 auto;
   display: block;
-  min-width: 200px;
   
   &:hover {
     background-color: #e6b229;
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  border: 2px solid #333;
+  border-top: 2px solid #ffc62d;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
   }
 `;
 
@@ -138,6 +154,7 @@ function App() {
   const [selectedBalance, setSelectedBalance] = useState(50000);
   const [showCheckout, setShowCheckout] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // Check if we're on the admin route
   const isAdminRoute = window.location.pathname === '/admin';
@@ -145,6 +162,15 @@ function App() {
   useEffect(() => {
     const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
     setIsAdminLoggedIn(loggedIn);
+  }, []);
+
+  // Add initialization effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitializing(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleLogin = () => {
@@ -177,6 +203,15 @@ function App() {
       <AdminDashboard onLogout={handleLogout} />
     ) : (
       <AdminLogin onLogin={handleLogin} />
+    );
+  }
+
+  if (isInitializing) {
+    return (
+      <Container style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <LoadingSpinner />
+        <div style={{ marginTop: '2rem', color: '#999' }}>Loading challenge conditions...</div>
+      </Container>
     );
   }
 

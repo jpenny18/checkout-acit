@@ -114,8 +114,53 @@ const FastPassBadge = styled.span`
   font-size: 0.9rem;
 `;
 
+const TransactionDetails = styled.div`
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 0.5rem;
+`;
+
+const TransactionHash = styled.a`
+  color: #ffc62d;
+  text-decoration: none;
+  word-break: break-all;
+  
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const PaymentDetails = styled.div`
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #999;
+`;
+
+const BulkActionBar = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #222;
+  border-radius: 8px;
+`;
+
+const Checkbox = styled.input.attrs({ type: 'checkbox' })`
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+`;
+
+const BulkDeleteButton = styled(ActionButton)`
+  background: #ff4444;
+  opacity: ${props => props.disabled ? 0.5 : 1};
+  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+`;
+
 function AdminDashboard() {
   const [orders, setOrders] = useState([]);
+  const [selectedOrders, setSelectedOrders] = useState(new Set());
 
   useEffect(() => {
     const q = query(collection(db, 'orders'), orderBy('timestamp', 'desc'));
@@ -130,6 +175,41 @@ function AdminDashboard() {
 
     return () => unsubscribe();
   }, []);
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedOrders(new Set(orders.map(order => order.id)));
+    } else {
+      setSelectedOrders(new Set());
+    }
+  };
+
+  const handleSelectOrder = (orderId) => {
+    const newSelected = new Set(selectedOrders);
+    if (newSelected.has(orderId)) {
+      newSelected.delete(orderId);
+    } else {
+      newSelected.add(orderId);
+    }
+    setSelectedOrders(newSelected);
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedOrders.size === 0) return;
+    
+    if (window.confirm(`Are you sure you want to delete ${selectedOrders.size} orders?`)) {
+      try {
+        const deletePromises = Array.from(selectedOrders).map(orderId => 
+          deleteDoc(doc(db, 'orders', orderId))
+        );
+        await Promise.all(deletePromises);
+        setSelectedOrders(new Set());
+      } catch (error) {
+        console.error('Error deleting orders:', error);
+        alert('Error deleting orders. Please try again.');
+      }
+    }
+  };
 
   const handleDelete = async (orderId, docId) => {
     if (window.confirm(`Are you sure you want to delete order ${orderId}?`)) {
@@ -155,20 +235,50 @@ function AdminDashboard() {
   };
 
   const formatDate = (timestamp) => {
-    if (!timestamp) return '';
-    const date = timestamp.toDate();
-    return new Intl.DateTimeFormat('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short'
-    }).format(date);
+    if (!timestamp) return 'N/A';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleString();
+  };
+
+  const getTransactionExplorerUrl = (txHash, cryptoType) => {
+    switch (cryptoType) {
+      case 'BTC':
+        return `https://www.blockchain.com/btc/tx/${txHash}`;
+      case 'ETH':
+        return `https://etherscan.io/tx/${txHash}`;
+      case 'USDT':
+        return `https://tronscan.org/#/transaction/${txHash}`;
+      default:
+        return null;
+    }
   };
 
   return (
     <DashboardContainer>
       <Header>ACI Admin Dashboard</Header>
       
+      <BulkActionBar>
+        <Checkbox
+          checked={selectedOrders.size === orders.length}
+          onChange={handleSelectAll}
+        />
+        <span>{selectedOrders.size} orders selected</span>
+        <BulkDeleteButton
+          disabled={selectedOrders.size === 0}
+          onClick={handleBulkDelete}
+        >
+          Delete Selected ({selectedOrders.size})
+        </BulkDeleteButton>
+      </BulkActionBar>
+
       <OrdersTable>
         <TableHeader>
+          <div>
+            <Checkbox
+              checked={selectedOrders.size === orders.length}
+              onChange={handleSelectAll}
+            />
+          </div>
           <div>Order ID</div>
           <div>Customer</div>
           <div>Contact</div>
@@ -184,6 +294,12 @@ function AdminDashboard() {
 
         {orders.map(order => (
           <TableRow key={order.id}>
+            <div>
+              <Checkbox
+                checked={selectedOrders.has(order.id)}
+                onChange={() => handleSelectOrder(order.id)}
+              />
+            </div>
             <div>{order.orderId}</div>
             <div>{`${order.customerInfo.firstName} ${order.customerInfo.lastName}`}</div>
             <div>
@@ -199,6 +315,35 @@ function AdminDashboard() {
               {order.orderDetails.paymentMethod === 'crypto' ? (
                 <>
                   <span>₿</span> Crypto
+                  {order.paymentDetails && (
+                    <PaymentDetails>
+                      {order.paymentDetails.cryptoType && (
+                        <div>Type: {order.paymentDetails.cryptoType}</div>
+                      )}
+                      {order.paymentDetails.txHash && (
+                        <TransactionHash 
+                          href={getTransactionExplorerUrl(
+                            order.paymentDetails.txHash,
+                            order.paymentDetails.cryptoType
+                          )}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Tx: {order.paymentDetails.txHash.substring(0, 8)}...
+                        </TransactionHash>
+                      )}
+                      {order.paymentDetails.confirmations && (
+                        <div>
+                          Confirmations: {order.paymentDetails.confirmations}
+                        </div>
+                      )}
+                      {order.paymentDetails.updatedAt && (
+                        <div>
+                          Updated: {formatDate(order.paymentDetails.updatedAt.toDate())}
+                        </div>
+                      )}
+                    </PaymentDetails>
+                  )}
                 </>
               ) : (
                 <>
