@@ -41,8 +41,10 @@ const BalanceSection = styled.div`
   flex-wrap: wrap;
   
   @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 0.5rem;
+    flex-direction: row;
+    gap: 0.3rem;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
   }
 `;
 
@@ -62,7 +64,12 @@ const BalanceButton = styled.button`
   min-width: 200px;
   
   @media (max-width: 768px) {
-    width: 100%;
+    min-width: unset;
+    width: 32%;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    border-width: 1px;
   }
 `;
 
@@ -71,6 +78,12 @@ const Table = styled.div`
   border-radius: 8px;
   overflow: hidden;
   overflow-x: auto;
+
+  @media (max-width: 768px) {
+    font-size: 0.65rem;
+    line-height: 1.2;
+    min-height: 420px; /* Fixed height to prevent jumping */
+  }
 `;
 
 const TableHeader = styled.div`
@@ -82,7 +95,16 @@ const TableHeader = styled.div`
   min-width: 600px;
 
   @media (max-width: 768px) {
-    font-size: 0.9rem;
+    min-width: unset;
+    padding: 0.5rem;
+    font-size: 0.6rem;
+    text-align: center;
+    gap: 0.25rem;
+    
+    > div {
+      padding: 0 2px;
+      white-space: nowrap;
+    }
   }
 `;
 
@@ -99,7 +121,18 @@ const TableRow = styled.div`
   }
 
   @media (max-width: 768px) {
-    font-size: 0.9rem;
+    min-width: unset;
+    padding: 0.5rem;
+    font-size: 0.65rem;
+    gap: 0.25rem;
+    min-height: 35px; /* Fixed height for rows */
+    align-items: center;
+
+    > div {
+      white-space: nowrap;
+      text-align: center;
+      padding: 0 2px;
+    }
   }
 `;
 
@@ -115,6 +148,15 @@ const PromotionBanner = styled.div`
   margin: 2rem 0;
   border-radius: 4px;
   text-align: center;
+
+  @media (max-width: 768px) {
+    font-size: 0.5rem;
+    padding: 0.5rem;
+    margin: 1rem auto;
+    width: fit-content;
+    min-width: 200px;
+    white-space: nowrap;
+  }
 `;
 
 const StartButton = styled.button`
@@ -133,6 +175,13 @@ const StartButton = styled.button`
   
   &:hover {
     background-color: #e6b229;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 200px;
+    padding: 0.8rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
   }
 `;
 
@@ -279,7 +328,14 @@ function App() {
             </TableRow>
 
             <TableRow>
-              <div>Speed Pass</div>
+              <div>Leverage</div>
+              <div>1:200</div>
+              <div>1:200</div>
+              <div>1:200</div>
+            </TableRow>
+
+            <TableRow>
+              <div>Fast Pass</div>
               <div>X</div>
               <HighlightedCell>YES</HighlightedCell>
               <div>X</div>
