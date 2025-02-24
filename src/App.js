@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
 import styled from 'styled-components';
 import CheckoutForm from './components/CheckoutForm';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import TestRunner from './components/TestRunner';
+import LandingPage from './components/LandingPage';
+import Auth from './components/Auth';
+import Dashboard from './components/Dashboard';
+import LoadingSpinner from './components/LoadingSpinner';
+import ScrollToTop from './components/ScrollToTop';
+import PrivacyPolicy from './components/pages/PrivacyPolicy';
+import RiskDisclosure from './components/pages/RiskDisclosure';
+import TermsOfService from './components/pages/TermsOfService';
+import RefundPolicy from './components/pages/RefundPolicy';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from './firebase';
 
 const Container = styled.div`
   background-color: #1a1a1a;
@@ -185,19 +199,88 @@ const StartButton = styled.button`
   }
 `;
 
-const LoadingSpinner = styled.div`
-  border: 2px solid #333;
-  border-top: 2px solid #ffc62d;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
+const ChallengeContainer = styled(Container)`
+  min-height: 100vh;
+`;
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+const PrivateRoute = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner fullScreen text="Loading..." />;
   }
+
+  return isAuthenticated ? children : <Navigate to="/auth" />;
+};
+
+const AdminRoute = ({ children }) => {
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
+
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          setIsAdmin(userDoc.exists() && userDoc.data().role === 'admin');
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+        }
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner fullScreen text="Verifying admin access..." />;
+  }
+
+  return isAdmin ? children : <Navigate to="/admin" />;
+};
+
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: #1a1a1a;
+  gap: 2rem;
+`;
+
+const LoadingLogo = styled.img`
+  height: 60px;
+
+  @media (max-width: 768px) {
+    height: 48px;
+  }
+`;
+
+const LoadingText = styled.div`
+  color: #999;
+  font-size: 1rem;
 `;
 
 function App() {
@@ -206,15 +289,26 @@ function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
-  // Check if we're on the admin route
-  const isAdminRoute = window.location.pathname === '/admin';
-
   useEffect(() => {
-    const loggedIn = localStorage.getItem('adminLoggedIn') === 'true';
-    setIsAdminLoggedIn(loggedIn);
+    const checkAdminLogin = async () => {
+      const adminUid = localStorage.getItem('adminUid');
+      if (!adminUid) {
+        setIsAdminLoggedIn(false);
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', adminUid));
+        setIsAdminLoggedIn(userDoc.exists() && userDoc.data().role === 'admin');
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        setIsAdminLoggedIn(false);
+      }
+    };
+
+    checkAdminLogin();
   }, []);
 
-  // Add initialization effect
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsInitializing(false);
@@ -228,7 +322,6 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminLoggedIn');
     setIsAdminLoggedIn(false);
   };
 
@@ -244,31 +337,8 @@ function App() {
 
   const values = calculateValues(selectedBalance);
 
-  const handleBack = () => {
-    setShowCheckout(false);
-  };
-
-  if (isAdminRoute) {
-    return isAdminLoggedIn ? (
-      <AdminDashboard onLogout={handleLogout} />
-    ) : (
-      <AdminLogin onLogin={handleLogin} />
-    );
-  }
-
-  if (isInitializing) {
-    return (
-      <Container style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <LoadingSpinner />
-        <div style={{ marginTop: '2rem', color: '#999' }}>Loading challenge conditions...</div>
-      </Container>
-    );
-  }
-
-  return (
-    <Container>
-      {!showCheckout ? (
-        <>
+  const ChallengeContent = () => (
+    <ChallengeContainer>
           <Header>Challenge Conditions</Header>
           
           <SectionHeader>BALANCE</SectionHeader>
@@ -356,20 +426,55 @@ function App() {
           <StartButton onClick={() => setShowCheckout(true)}>
             START ACI CHALLENGE
           </StartButton>
-        </>
-      ) : (
-        <CheckoutForm 
-          selectedBalance={selectedBalance} 
-          onBack={handleBack}
+    </ChallengeContainer>
+  );
+
+  if (isInitializing) {
+    return (
+      <LoadingContainer>
+        <LoadingLogo 
+          src="https://images.squarespace-cdn.com/content/633b282f66006a532ef90a21/58026c80-ad9d-4a80-9a6d-249948356a70/A-removebg-preview.png?content-type=image%2Fpng" 
+          alt="ACI Trading Challenge" 
         />
-      )}
-      
-      {process.env.NODE_ENV === 'development' && (
-        <div style={{ margin: '2rem auto', maxWidth: '800px' }}>
-          <TestRunner />
-        </div>
-      )}
-    </Container>
+        <LoadingSpinner />
+        <LoadingText>Loading...</LoadingText>
+      </LoadingContainer>
+    );
+  }
+
+  return (
+    <Router>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/risk" element={<RiskDisclosure />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/refund" element={<RefundPolicy />} />
+        <Route
+          path="/dashboard/*"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            isAdminLoggedIn ? (
+              <AdminRoute>
+                <AdminDashboard onLogout={handleLogout} />
+              </AdminRoute>
+            ) : (
+              <AdminLogin onLogin={handleLogin} />
+            )
+          }
+        />
+        <Route path="/test" element={<TestRunner />} />
+      </Routes>
+    </Router>
   );
 }
 

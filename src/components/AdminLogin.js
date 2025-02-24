@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { auth, db } from '../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const LoginContainer = styled.div`
   background-color: #1a1a1a;
@@ -68,16 +71,35 @@ const ErrorMessage = styled.div`
 `;
 
 function AdminLogin({ onLogin }) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (username === 'jpenny' && password === 'jpenny1@') {
-      localStorage.setItem('adminLoggedIn', 'true');
-      onLogin();
-    } else {
-      setError('Invalid username or password');
+  const handleLogin = async () => {
+    setError('');
+    setIsLoading(true);
+
+    try {
+      // Sign in with Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Check if user has admin role in Firestore
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+      
+      if (userDoc.exists() && userDoc.data().role === 'admin') {
+        localStorage.setItem('adminLoggedIn', 'true');
+        localStorage.setItem('adminUid', userCredential.user.uid);
+        onLogin();
+      } else {
+        await auth.signOut();
+        setError('Unauthorized access. Admin privileges required.');
+      }
+    } catch (err) {
+      setError('Invalid credentials or unauthorized access.');
+      console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,10 +109,10 @@ function AdminLogin({ onLogin }) {
         <Title>Admin Login</Title>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <Input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <Input
           type="password"
@@ -98,8 +120,11 @@ function AdminLogin({ onLogin }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <LoginButton onClick={handleLogin}>
-          Login
+        <LoginButton 
+          onClick={handleLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Logging in...' : 'Login'}
         </LoginButton>
       </LoginBox>
     </LoginContainer>

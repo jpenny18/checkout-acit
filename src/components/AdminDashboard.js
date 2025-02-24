@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { db, auth } from '../firebase';
+import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import AdminMessages from './AdminMessages';
 
 const DashboardContainer = styled.div`
   background-color: #1a1a1a;
@@ -158,11 +161,84 @@ const BulkDeleteButton = styled(ActionButton)`
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
 `;
 
-function AdminDashboard() {
+const LogoutButton = styled.button`
+  background: #333;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  
+  &:hover {
+    background: #444;
+  }
+`;
+
+const HeaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
+
+const TabsContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+`;
+
+const Tab = styled.button`
+  background: ${props => props.active ? '#ffc62d' : '#333'};
+  color: ${props => props.active ? '#1a1a1a' : 'white'};
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${props => props.active ? '#e6b229' : '#444'};
+  }
+`;
+
+function AdminDashboard({ onLogout }) {
   const [orders, setOrders] = useState([]);
   const [selectedOrders, setSelectedOrders] = useState(new Set());
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [activeTab, setActiveTab] = useState('orders');
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const checkAdminStatus = async () => {
+      const user = auth.currentUser;
+      if (!user) {
+        handleLogout();
+        return;
+      }
+
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (!userDoc.exists() || userDoc.data().role !== 'admin') {
+          handleLogout();
+          return;
+        }
+        setIsAdmin(true);
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        handleLogout();
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
     const q = query(collection(db, 'orders'), orderBy('timestamp', 'desc'));
     
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -174,7 +250,19 @@ function AdminDashboard() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [isAdmin]);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem('adminLoggedIn');
+      localStorage.removeItem('adminUid');
+      onLogout();
+      navigate('/admin');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -253,10 +341,8 @@ function AdminDashboard() {
     }
   };
 
-  return (
-    <DashboardContainer>
-      <Header>ACI Admin Dashboard</Header>
-      
+  const renderOrdersTab = () => (
+    <>
       <BulkActionBar>
         <Checkbox
           checked={selectedOrders.size === orders.length}
@@ -380,6 +466,44 @@ function AdminDashboard() {
           </TableRow>
         ))}
       </OrdersTable>
+    </>
+  );
+
+  if (!isAdmin) {
+    return null;
+  }
+
+  return (
+    <DashboardContainer>
+      <HeaderContainer>
+        <Header>ACI Admin Dashboard</Header>
+        <LogoutButton onClick={handleLogout}>
+          Logout
+        </LogoutButton>
+      </HeaderContainer>
+
+      <TabsContainer>
+        <Tab 
+          active={activeTab === 'orders'} 
+          onClick={() => setActiveTab('orders')}
+        >
+          Orders
+        </Tab>
+        <Tab 
+          active={activeTab === 'messages'} 
+          onClick={() => setActiveTab('messages')}
+        >
+          Support Messages
+        </Tab>
+      </TabsContainer>
+
+      {activeTab === 'messages' ? (
+        <AdminMessages />
+      ) : (
+        <OrdersTable>
+          {renderOrdersTab()}
+        </OrdersTable>
+      )}
     </DashboardContainer>
   );
 }
