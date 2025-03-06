@@ -5,6 +5,7 @@ import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc, getD
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import AdminMessages from './AdminMessages';
+import AdminUsers from './AdminUsers';
 
 const DashboardContainer = styled.div`
   background-color: #1a1a1a;
@@ -188,6 +189,11 @@ const TabsContainer = styled.div`
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+  }
 `;
 
 const Tab = styled.button`
@@ -199,9 +205,16 @@ const Tab = styled.button`
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s;
+  white-space: nowrap;
 
   &:hover {
     background: ${props => props.active ? '#e6b229' : '#444'};
+  }
+
+  @media (max-width: 768px) {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
   }
 `;
 
@@ -490,6 +503,12 @@ function AdminDashboard({ onLogout }) {
           Orders
         </Tab>
         <Tab 
+          active={activeTab === 'users'} 
+          onClick={() => setActiveTab('users')}
+        >
+          Users
+        </Tab>
+        <Tab 
           active={activeTab === 'messages'} 
           onClick={() => setActiveTab('messages')}
         >
@@ -499,6 +518,8 @@ function AdminDashboard({ onLogout }) {
 
       {activeTab === 'messages' ? (
         <AdminMessages />
+      ) : activeTab === 'users' ? (
+        <AdminUsers />
       ) : (
         <OrdersTable>
           {renderOrdersTab()}

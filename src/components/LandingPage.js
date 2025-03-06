@@ -212,6 +212,11 @@ const HeroContent = styled.div`
   @media (max-width: 768px) {
     max-width: 100%;
     margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `;
 
@@ -235,6 +240,14 @@ const MainHeading = styled.h1`
   @media (max-width: 768px) {
     font-size: 2.5rem;
     margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    
+    span {
+      font-size: 0.85em;
+      white-space: normal;
+      padding: 0 0.5rem;
+    }
   }
 `;
 
@@ -252,6 +265,9 @@ const SubHeading = styled.p`
   @media (max-width: 768px) {
     font-size: 1rem;
     margin: 0 auto 2rem;
+    text-align: center;
+    padding: 0 1rem;
+    width: 100%;
   }
 `;
 
@@ -1322,7 +1338,7 @@ const LandingPage = () => {
                 <h3>STEP 3</h3>
                 <h4>ACI TRADER</h4>
                 <p>
-                  Advancing to another step demonstrates commitment and talent, leading to an ACI Traders Account with fictitious funds of up to $4,000,000 in a demo environment. Despite being a demo, it'll increase your reward of up to 95% of simulated profits without risking their own capital.
+                  Advancing to another step demonstrates commitment and talent, leading to an ACI Traders Account with fictitious funds of up to $1,000,000 in a demo environment. Despite being a demo, it'll increase your reward of up to 95% of simulated profits without risking their own capital.
                 </p>
               </Step>
               <AccountDetails>
@@ -1484,7 +1500,7 @@ const LandingPage = () => {
               <FeatureIcon>🌐</FeatureIcon>
               <FeatureTitle>TRADING NETWORK</FeatureTitle>
               <FeatureDescription>
-                Exclusive access to the unique ecosystem of profitable traders, join a supportive and engaged community led by our seven-figure AI.
+                Exclusive access to the unique ecosystem of profitable traders, join a supportive and engaged community led by our seven-figure trader Penny Pips.
               </FeatureDescription>
             </FeatureCard>
           </FeaturesGrid>
@@ -1521,7 +1537,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 3 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 3}>
-                We welcome traders from most countries worldwide. However, due to regulatory requirements, some restrictions may apply. Please contact our support team for specific country-related inquiries.
+                We welcome traders from all countries worldwide.
               </FAQAnswer>
             </FAQCard>
 
@@ -1531,7 +1547,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 4 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 4}>
-                No, there is no mandatory inactivity period for your accounts. You can trade continuously as long as you maintain compliance with our risk management rules and trading objectives.
+                Yes, your account will be closed after 30 days of inactivity this goes for funded accounts and challenge accounts.
               </FAQAnswer>
             </FAQCard>
 
@@ -1541,7 +1557,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 5 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 5}>
-                Yes, we offer a comprehensive scaling plan that allows successful traders to increase their trading capital up to $200,000. The plan is based on consistent performance and adherence to our trading rules.
+                Yes, we offer a comprehensive scaling plan that allows successful traders to increase their trading capital up to $1,000,000. The plan is based on consistent performance and adherence to our trading rules.
               </FAQAnswer>
             </FAQCard>
 
@@ -1561,7 +1577,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 7 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 7}>
-                Our minimum payout threshold is set at a reasonable level to ensure traders can access their earnings efficiently while maintaining operational sustainability.
+                We do not have a minimum payout.
               </FAQAnswer>
             </FAQCard>
 
@@ -1591,7 +1607,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 10 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 10}>
-                You become eligible for withdrawals after successfully completing the challenge phase and meeting our profit targets. Withdrawals can be processed once you've accumulated the minimum required profit.
+                You become eligible for withdrawals after successfully completing the challenge phase and meeting our profit targets. Withdrawals can be processed once you've accumulated profits on your funding account while ensuring to adhear to our ACI Traders Agreement and challenge account rules.
               </FAQAnswer>
             </FAQCard>
 
@@ -1611,7 +1627,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 12 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 12}>
-                Your challenge begins as soon as you place your first trade. You have the flexibility to start when you're ready, and there's no expiration date on when you must begin.
+                Your challenge begins as soon as you receive your login credentials.
               </FAQAnswer>
             </FAQCard>
           </FAQGrid>
