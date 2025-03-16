@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useNavigate, Link, Routes, Route } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Trophy, Users, Download, MessageSquare, User, LogOut, Award, Wallet, BarChart2, HelpCircle } from 'lucide-react';
+import { Trophy, Users, Download, MessageSquare, User, LogOut, Award, Wallet, BarChart2, HelpCircle, MessageCircle } from 'lucide-react';
 import Button from './Button';
 import CheckoutForm from './CheckoutForm';
 import ProfilePage from './ProfilePage';
@@ -512,11 +512,10 @@ const NavIndicator = styled.div`
   transform: translateY(-50%);
   left: ${props => {
     switch (props.active) {
-      case 'profile': return 'calc(20% - 20px)';
-      case 'challenge': return 'calc(40% - 20px)';
-      case 'leaderboard': return 'calc(60% - 20px)';
-      case 'payouts': return 'calc(80% - 20px)';
-      default: return 'calc(40% - 20px)';
+      case 'accounts': return 'calc(16.67% - 20px)';
+      case 'challenge': return 'calc(50% - 20px)';
+      case 'support': return 'calc(83.33% - 20px)';
+      default: return 'calc(50% - 20px)';
     }
   }};
   transition: left 0.3s ease;
@@ -768,7 +767,7 @@ const Dashboard = () => {
               setActiveNav('support');
             }}
           >
-            <MessageSquare />
+            <MessageCircle />
             Live Support
           </NavItem>
 
@@ -881,9 +880,9 @@ const Dashboard = () => {
         <BottomNavContent>
           <NavIndicator active={activeNav} />
           <NavButton 
-            to="/dashboard/profile" 
-            active={activeNav === 'profile'}
-            onClick={() => setActiveNav('profile')}
+            to="/dashboard/accounts" 
+            active={activeNav === 'accounts'}
+            onClick={() => setActiveNav('accounts')}
           >
             <User />
           </NavButton>
@@ -895,18 +894,11 @@ const Dashboard = () => {
             <Trophy />
           </NavButton>
           <NavButton 
-            to="/dashboard/leaderboard"
-            active={activeNav === 'leaderboard'}
-            onClick={() => setActiveNav('leaderboard')}
+            to="/dashboard/support"
+            active={activeNav === 'support'}
+            onClick={() => setActiveNav('support')}
           >
-            <Award />
-          </NavButton>
-          <NavButton 
-            to="/dashboard/payouts"
-            active={activeNav === 'payouts'}
-            onClick={() => setActiveNav('payouts')}
-          >
-            <Wallet />
+            <MessageCircle />
           </NavButton>
         </BottomNavContent>
       </BottomNav>

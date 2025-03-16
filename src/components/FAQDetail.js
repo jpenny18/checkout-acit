@@ -338,25 +338,26 @@ const FAQDetail = () => {
     'step 1 acit challenge': {
       content: [
         'ACIT Challenge - First Step Requirements:',
-        '• Trading Period: 30 days',
-        '• Minimum Trading Days: 10',
-        '• Maximum Daily Loss: 5%',
-        '• Maximum Total Loss: 10%',
-        '• Profit Target: 8%',
-        '• No weekend holding',
-        '• No news trading',
+        '• Trading Period: Unlimited',
+        '• Minimum Trading Days: 4',
+        '• Maximum Daily Loss: 6%',
+        '• Maximum Total Loss: 12%',
+        '• Profit Target: 10%',
+        '• Weekend holding is allowed',
+        '• News trading is allowed',
         'Successfully completing these requirements allows progression to Step 2.'
       ]
     },
     'step 2 verification': {
       content: [
         'Verification Phase Requirements:',
-        '• Trading Period: 60 days',
-        '• Minimum Trading Days: 10',
-        '• Maximum Daily Loss: 5%',
-        '• Maximum Total Loss: 10%',
+        '• Trading Period: Unlimited',
+        '• Minimum Trading Days: 4',
+        '• Maximum Daily Loss: 6%',
+        '• Maximum Total Loss: 12%',
         '• Profit Target: 5%',
-        '• Same rules apply (no weekend holding, no news trading)',
+        '• Weekend holding is allowed',
+        '• News trading is allowed',
         'Passing verification leads to receiving your ACIT Traders Account.'
       ]
     },
@@ -368,11 +369,12 @@ const FAQDetail = () => {
         '• Monetized demo environment',
         '• No time limit',
         '• Same trading rules apply:',
-        '  - Maximum Daily Loss: 5%',
-        '  - Maximum Total Loss: 10%',
-        '  - No weekend holding',
-        '  - No news trading',
-        'Maintain consistent performance to unlock scaling opportunities.'
+        '  - Maximum Daily Loss: 6%',
+        '  - Maximum Total Loss: 12%',
+        '  - Weekend holding is allowed',
+        '  - News trading is allowed',
+        'Maintain consistent performance to unlock scaling opportunities.',
+        'Additional Information: Our funded Ascendant Traders cannot risk more than 2% of their account size in a single trade.',
       ]
     },
     'can i trade news?': {
