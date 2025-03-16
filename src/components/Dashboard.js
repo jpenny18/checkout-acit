@@ -3,11 +3,16 @@ import styled from 'styled-components';
 import { useNavigate, Link, Routes, Route } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Trophy, Users, Download, MessageSquare, User, LogOut } from 'lucide-react';
+import { Trophy, Users, Download, MessageSquare, User, LogOut, Award, Wallet, BarChart2, HelpCircle } from 'lucide-react';
 import Button from './Button';
 import CheckoutForm from './CheckoutForm';
 import ProfilePage from './ProfilePage';
 import SupportPage from './SupportPage';
+import Leaderboard from './Leaderboard';
+import Payouts from './Payouts';
+import MyAccounts from './MyAccounts';
+import FAQ from './FAQ';
+import FAQDetail from './FAQDetail';
 
 const HamburgerButton = styled.button`
   display: none;
@@ -63,6 +68,9 @@ const Sidebar = styled.div`
   display: flex;
   flex-direction: column;
   border-right: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100vh;
+  position: sticky;
+  top: 0;
 
   @media (max-width: 768px) {
     position: fixed;
@@ -504,10 +512,11 @@ const NavIndicator = styled.div`
   transform: translateY(-50%);
   left: ${props => {
     switch (props.active) {
-      case 'profile': return 'calc(16.66% - 20px)';
-      case 'challenge': return 'calc(50% - 20px)';
-      case 'support': return 'calc(83.33% - 20px)';
-      default: return 'calc(50% - 20px)';
+      case 'profile': return 'calc(20% - 20px)';
+      case 'challenge': return 'calc(40% - 20px)';
+      case 'leaderboard': return 'calc(60% - 20px)';
+      case 'payouts': return 'calc(80% - 20px)';
+      default: return 'calc(40% - 20px)';
     }
   }};
   transition: left 0.3s ease;
@@ -588,6 +597,56 @@ const FooterText = styled.div`
   }
 `;
 
+const NavContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+
+  /* Webkit scrollbar styling */
+  &::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 3px;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: #444;
+  }
+
+  /* Firefox scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
+`;
+
+const BackToWebsiteButton = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #999;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+  margin: 0.5rem -1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const user = auth.currentUser;
@@ -652,30 +711,96 @@ const Dashboard = () => {
           alt="ACI Trading Challenge" 
         />
         
-        <NavItem 
-          to="/dashboard" 
-          active="true"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <Trophy />
-          New Challenge
-        </NavItem>
-        
-        <NavItem 
-          to="/dashboard/profile"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <User />
-          My Profile
-        </NavItem>
-        
-        <NavItem 
-          to="/dashboard/support"
-          onClick={() => setIsMenuOpen(false)}
-        >
-          <MessageSquare />
-          Live Support
-        </NavItem>
+        <NavContainer>
+          <NavItem 
+            to="/dashboard" 
+            active={activeNav === 'challenge'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('challenge');
+            }}
+          >
+            <Trophy />
+            New Challenge
+          </NavItem>
+
+          <NavItem 
+            to="/dashboard/accounts"
+            active={activeNav === 'accounts'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('accounts');
+            }}
+          >
+            <BarChart2 />
+            My Accounts
+          </NavItem>
+
+          <NavItem 
+            to="/dashboard/leaderboard"
+            active={activeNav === 'leaderboard'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('leaderboard');
+            }}
+          >
+            <Award />
+            Leaderboard
+          </NavItem>
+          
+          <NavItem 
+            to="/dashboard/payouts"
+            active={activeNav === 'payouts'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('payouts');
+            }}
+          >
+            <Wallet />
+            Payouts
+          </NavItem>
+          
+          <NavItem 
+            to="/dashboard/support"
+            active={activeNav === 'support'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('support');
+            }}
+          >
+            <MessageSquare />
+            Live Support
+          </NavItem>
+
+          <NavItem 
+            to="/dashboard/faq"
+            active={activeNav === 'faq'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('faq');
+            }}
+          >
+            <HelpCircle />
+            FAQ
+          </NavItem>
+
+          <NavItem 
+            to="/dashboard/profile"
+            active={activeNav === 'profile'}
+            onClick={() => {
+              setIsMenuOpen(false);
+              setActiveNav('profile');
+            }}
+          >
+            <User />
+            My Profile
+          </NavItem>
+        </NavContainer>
+
+        <BackToWebsiteButton to="/">
+          <LogOut style={{ transform: 'rotate(180deg)' }} />
+          Back to Website
+        </BackToWebsiteButton>
 
         <UserSection>
           <Avatar>{getInitials(user?.displayName || 'User Name')}</Avatar>
@@ -724,6 +849,10 @@ const Dashboard = () => {
               )
             }
           />
+          <Route path="/accounts" element={<MyAccounts />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/faq/:category/:question" element={<FAQDetail />} />
           <Route path="/profile" element={
             <>
               <ProfilePage />
@@ -744,6 +873,7 @@ const Dashboard = () => {
               </FooterText>
             </>
           } />
+          <Route path="/payouts" element={<Payouts />} />
         </Routes>
       </MainContent>
 
@@ -765,11 +895,18 @@ const Dashboard = () => {
             <Trophy />
           </NavButton>
           <NavButton 
-            to="/dashboard/support" 
-            active={activeNav === 'support'}
-            onClick={() => setActiveNav('support')}
+            to="/dashboard/leaderboard"
+            active={activeNav === 'leaderboard'}
+            onClick={() => setActiveNav('leaderboard')}
           >
-            <MessageSquare />
+            <Award />
+          </NavButton>
+          <NavButton 
+            to="/dashboard/payouts"
+            active={activeNav === 'payouts'}
+            onClick={() => setActiveNav('payouts')}
+          >
+            <Wallet />
           </NavButton>
         </BottomNavContent>
       </BottomNav>
