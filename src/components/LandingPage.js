@@ -98,6 +98,82 @@ const NavLink = styled.a`
   }
 `;
 
+const MainHeading = styled.h1`
+  font-size: 4.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  color: white;
+  
+  span {
+    color: #ffc62d;
+    display: block;
+    font-size: 0.9em;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 1024px) {
+    font-size: 3.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    width: 100%;
+    
+    span {
+      font-size: 0.85em;
+      white-space: nowrap;
+      padding: 0;
+      min-width: min-content;
+      display: inline-block;
+      width: 100%;
+    }
+  }
+`;
+
+const SubHeading = styled.p`
+  font-size: 1.25rem;
+  color: #999;
+  margin-bottom: 2.5rem;
+  max-width: 500px;
+  
+  @media (max-width: 1024px) {
+    font-size: 1.15rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin: 0 auto 1.5rem;
+    text-align: center;
+    padding: 0 1rem;
+    width: 100%;
+  }
+`;
+
+const HeroContent = styled.div`
+  max-width: 600px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    > ${SubHeading}, > button {
+      order: 3;
+    }
+
+    > ${MainHeading} {
+      order: 1;
+    }
+  }
+`;
+
 const HeroSection = styled.section`
   min-height: 100vh;
   background: linear-gradient(135deg, #151515 0%, #1a1a1a 100%);
@@ -133,8 +209,9 @@ const HeroSection = styled.section`
   }
 
   @media (max-width: 768px) {
-    padding: 8rem 1rem 8rem;
+    padding: 6rem 1rem 8rem;
     min-height: auto;
+    justify-content: flex-start;
   }
 `;
 
@@ -155,12 +232,11 @@ const Particle = styled.div`
   background: rgba(255, 198, 45, 0.15);
   border-radius: 50%;
   animation: particleFloat 15s linear infinite;
-  opacity: 0;
 
   ${[...Array(20)].map((_, i) => `
     &:nth-child(${i + 1}) {
       top: ${Math.random() * 100}%;
-      right: -3px;
+      right: ${Math.random() * 100}%;
       animation-delay: ${Math.random() * 10}s;
       animation-duration: ${15 + Math.random() * 15}s;
     }
@@ -169,17 +245,9 @@ const Particle = styled.div`
   @keyframes particleFloat {
     0% {
       transform: translateX(0);
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 1;
     }
     100% {
       transform: translateX(-100vw);
-      opacity: 0;
     }
   }
 `;
@@ -200,74 +268,7 @@ const HeroContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    text-align: center;
-  }
-`;
-
-const HeroContent = styled.div`
-  max-width: 600px;
-
-  @media (max-width: 768px) {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 1rem;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-`;
-
-const MainHeading = styled.h1`
-  font-size: 4.5rem;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-  color: white;
-  
-  span {
-    color: #ffc62d;
-    display: block;
-    font-size: 0.9em;
-    white-space: nowrap;
-  }
-  
-  @media (max-width: 1024px) {
-    font-size: 3.5rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
-    width: 100%;
-    
-    span {
-      font-size: 0.85em;
-      white-space: normal;
-      padding: 0 0.5rem;
-    }
-  }
-`;
-
-const SubHeading = styled.p`
-  font-size: 1.25rem;
-  color: #999;
-  margin-bottom: 2.5rem;
-  max-width: 500px;
-  
-  @media (max-width: 1024px) {
-    font-size: 1.15rem;
-    margin-bottom: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1rem;
-    margin: 0 auto 2rem;
-    text-align: center;
-    padding: 0 1rem;
-    width: 100%;
+    display: none;
   }
 `;
 
@@ -285,8 +286,10 @@ const HeroRight = styled.div`
   }
 
   @media (max-width: 768px) {
-    height: 400px;
-    display: none;
+    height: 350px;
+    order: 2;
+    margin: 1rem 0 2rem;
+    overflow: visible;
   }
 `;
 
@@ -300,6 +303,12 @@ const GlobeWrapper = styled.div`
   @media (max-width: 1024px) {
     width: 300px;
     height: 300px;
+  }
+
+  @media (max-width: 768px) {
+    width: 350px;
+    height: 280px;
+    transform: scale(0.9);
   }
 `;
 
@@ -374,6 +383,29 @@ const StatCard = styled.div`
 
     &:last-of-type {
       left: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 140px;
+    padding: 0.875rem;
+
+    h3 {
+      font-size: 1rem;
+    }
+
+    p {
+      font-size: 0.75rem;
+    }
+
+    &:first-of-type {
+      top: 5%;
+      right: -10px;
+    }
+
+    &:last-of-type {
+      bottom: 5%;
+      left: -10px;
     }
   }
 `;
@@ -1218,10 +1250,176 @@ const FAQAnswer = styled.div`
   }
 `;
 
+const MobileWrapper = styled.div`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+`;
+
+const HeaderWrapper = styled.div`
+  @media (max-width: 768px) {
+    order: 1;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+`;
+
+const GlobeSection = styled.div`
+  @media (max-width: 768px) {
+    order: 2;
+    width: 100%;
+    margin: 0 0 2rem;
+  }
+`;
+
+const ContentWrapper = styled.div`
+  @media (max-width: 768px) {
+    order: 3;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 3rem;
+  }
+`;
+
+const PopupOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  display: ${props => props.isVisible ? 'flex' : 'none'};
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+    align-items: center;
+  }
+`;
+
+const PopupContent = styled.div`
+  background: linear-gradient(135deg, rgba(42, 42, 42, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
+  border-radius: 16px;
+  padding: 2.5rem;
+  position: relative;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid rgba(255, 198, 45, 0.3);
+  box-shadow: 
+    0 0 50px rgba(255, 198, 45, 0.1),
+    inset 0 0 20px rgba(255, 198, 45, 0.05);
+  animation: popupFloat 0.5s ease-out;
+  
+  @keyframes popupFloat {
+    0% {
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+    width: 95%;
+  }
+`;
+
+const PopupCloseButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #ffc62d;
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 198, 45, 0.1);
+    transform: rotate(90deg);
+  }
+`;
+
+const PopupTitle = styled.h2`
+  color: #ffc62d;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+`;
+
+const PopupDescription = styled.p`
+  color: white;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  font-size: 1.1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`;
+
+const DiscountCode = styled.div`
+  background: rgba(255, 198, 45, 0.1);
+  border: 2px dashed #ffc62d;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin: 1.5rem 0;
+  
+  span {
+    color: #ffc62d;
+    font-size: 1.8rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    
+    @media (max-width: 768px) {
+      font-size: 1.4rem;
+    }
+  }
+`;
+
+const PopupButton = styled(Button)`
+  width: 100%;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  padding: 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+`;
+
 const LandingPage = () => {
   const [selectedBalance, setSelectedBalance] = useState(50000);
   const [openFAQ, setOpenFAQ] = useState(null);
   const [hasTableScroll, setHasTableScroll] = useState(false);
+  const [showPopup, setShowPopup] = useState(true);
   const tableRef = useRef(null);
 
   const calculateValues = (balance) => ({
@@ -1250,6 +1448,25 @@ const LandingPage = () => {
   return (
     <PageWrapper>
       <GlobalStyle />
+      
+      {/* Add Popup */}
+      <PopupOverlay isVisible={showPopup}>
+        <PopupContent>
+          <PopupCloseButton onClick={() => setShowPopup(false)}>×</PopupCloseButton>
+          <PopupTitle>Special Offer! 🎉</PopupTitle>
+          <PopupDescription>
+            For a limited time, get an exclusive 35% discount on all trading challenges! Don't miss this opportunity to start your journey to becoming a funded trader.
+          </PopupDescription>
+          <DiscountCode>
+            <p style={{ color: '#999', marginBottom: '0.5rem' }}>Use Code</p>
+            <span>35OFF</span>
+          </DiscountCode>
+          <PopupButton to="/auth?mode=signup" onClick={() => setShowPopup(false)}>
+            CLAIM YOUR DISCOUNT NOW
+          </PopupButton>
+        </PopupContent>
+      </PopupOverlay>
+
       <Navigation>
         <Logo 
           src="https://images.squarespace-cdn.com/content/633b282f66006a532ef90a21/58026c80-ad9d-4a80-9a6d-249948356a70/A-removebg-preview.png?content-type=image%2Fpng" 
@@ -1274,6 +1491,8 @@ const LandingPage = () => {
             <Particle key={i} />
           ))}
         </Particles>
+
+        {/* Desktop Layout */}
         <HeroContainer>
           <HeroContent>
             <MainHeading>
@@ -1304,6 +1523,43 @@ const LandingPage = () => {
             </StatCardContainer>
           </HeroRight>
         </HeroContainer>
+
+        {/* Mobile Layout */}
+        <MobileWrapper>
+          <HeaderWrapper>
+            <MainHeading>
+              We fund traders.
+              <span>Ascend to new heights.</span>
+            </MainHeading>
+          </HeaderWrapper>
+
+          <GlobeSection>
+            <HeroRight>
+              <GlobeWrapper>
+                <Globe />
+              </GlobeWrapper>
+              <StatCardContainer>
+                <StatCard>
+                  <h3>$12,400,000+</h3>
+                  <p>Total Funding</p>
+                </StatCard>
+                <StatCard>
+                  <h3>$1,000+</h3>
+                  <p>Active Traders</p>
+                </StatCard>
+              </StatCardContainer>
+            </HeroRight>
+          </GlobeSection>
+
+          <ContentWrapper>
+            <SubHeading>
+              Join the fastest-growing proprietary trading firm, scale up to $1,000,000 in trading capital, and leverage cutting-edge technology to maximize your trading potential.
+            </SubHeading>
+            <Button to="/auth?mode=signup" size="large">
+              GET FUNDED TODAY
+            </Button>
+          </ContentWrapper>
+        </MobileWrapper>
       </HeroSection>
       
       <ProcessSection id="process">
