@@ -671,7 +671,7 @@ const Leaderboard = () => {
       <Card>
         <Header>
           <h1><Trophy size={24} /> Leaderboard</h1>
-          <p>Overview of currently most profitable active FTMO Accounts.</p>
+          <p>Overview of currently most profitable active ACIT Traders Accounts.</p>
         </Header>
 
         <TabsContainer>
