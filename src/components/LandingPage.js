@@ -5,6 +5,7 @@ import Button from './Button';
 import Footer from './Footer';
 import Globe from './Globe';
 import { Link } from 'react-router-dom';
+import { getCachedCryptoDiscountPercentage } from '../config/promotions';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -1689,7 +1690,7 @@ const LandingPage = () => {
         </Table>
 
         <PromotionBanner>
-          SAVE 25% ON ALL CHALLENGES IF BOUGHT IN CRYPTO
+          SAVE 35% ON ALL CHALLENGES - "35OFF"
         </PromotionBanner>
 
         <StartButton to="/auth?mode=signup">

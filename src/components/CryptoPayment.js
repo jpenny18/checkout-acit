@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import cryptoPaymentService, { simulatePayment } from '../services/cryptoPayment';
 import { db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { getCachedCryptoDiscountPercentage } from '../config/promotions';
 
 const Container = styled.div`
   background-color: #1a1a1a;
@@ -389,7 +390,7 @@ function CryptoPayment({ amount, onBack, orderId }) {
       <BackButton onClick={onBack}>← Back to Checkout</BackButton>
       
       <Title>Crypto Payment</Title>
-      <DiscountBadge>25% Crypto Discount Applied</DiscountBadge>
+      <DiscountBadge>{getCachedCryptoDiscountPercentage()}% Crypto Discount Applied</DiscountBadge>
       <Amount>${amount.toLocaleString()}</Amount>
 
       {error && (

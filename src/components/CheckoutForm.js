@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import CryptoPayment from './CryptoPayment';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { getCachedCryptoDiscountMultiplier, getCachedCryptoDiscountPercentage } from '../config/promotions';
 
 const FormContainer = styled.div`
   background-color: #1a1a1a;
@@ -306,7 +307,7 @@ function CheckoutForm({ selectedBalance, onBack }) {
                    selectedBalance === 100000 ? 600 : 999;
 
   const finalAmount = (paymentMethod === 'crypto' 
-    ? basePrice * (fastPassSelected ? 2 : 1) * 0.75  // 25% crypto discount
+    ? basePrice * (fastPassSelected ? 2 : 1) * getCachedCryptoDiscountMultiplier()
     : basePrice * (fastPassSelected ? 2 : 1));
 
   const handleInputChange = (e) => {
@@ -521,7 +522,7 @@ function CheckoutForm({ selectedBalance, onBack }) {
             selected={paymentMethod === 'crypto'}
             onClick={() => setPaymentMethod('crypto')}
           >
-            ₿ Crypto (-25%)
+            ₿ Crypto (-{getCachedCryptoDiscountPercentage()}%)
           </PaymentButton>
         </PaymentMethodSection>
       </FormSection>
@@ -567,7 +568,7 @@ function CheckoutForm({ selectedBalance, onBack }) {
       <TotalAmount>
         Total Amount: <span>${finalAmount.toLocaleString()}</span>
         {paymentMethod === 'crypto' && 
-          <div style={{ fontSize: '0.9rem', color: '#999' }}>25% crypto discount applied</div>
+          <div style={{ fontSize: '0.9rem', color: '#999' }}>{getCachedCryptoDiscountPercentage()}% crypto discount applied</div>
         }
         {fastPassSelected &&
           <div style={{ fontSize: '0.9rem', color: '#999' }}>Fast Pass included</div>

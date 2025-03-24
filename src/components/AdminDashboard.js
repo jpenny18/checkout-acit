@@ -6,6 +6,7 @@ import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import AdminMessages from './AdminMessages';
 import AdminUsers from './AdminUsers';
+import PromotionsManager from './admin/PromotionsManager';
 
 const DashboardContainer = styled.div`
   background-color: #1a1a1a;
@@ -514,12 +515,20 @@ function AdminDashboard({ onLogout }) {
         >
           Support Messages
         </Tab>
+        <Tab 
+          active={activeTab === 'promotions'} 
+          onClick={() => setActiveTab('promotions')}
+        >
+          Promotions
+        </Tab>
       </TabsContainer>
 
       {activeTab === 'messages' ? (
         <AdminMessages />
       ) : activeTab === 'users' ? (
         <AdminUsers />
+      ) : activeTab === 'promotions' ? (
+        <PromotionsManager />
       ) : (
         <OrdersTable>
           {renderOrdersTab()}
