@@ -996,7 +996,7 @@ const ChallengeContent = ({
         </Table>
 
         <PromotionBanner>
-          SAVE 25% ON ALL CHALLENGES IF BOUGHT IN CRYPTO
+          SAVE 35% ON ALL CHALLENGES - "35OFF"
         </PromotionBanner>
 
         <StartButton onClick={() => setShowCheckout(true)}>

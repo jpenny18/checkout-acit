@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Special Offer: 35% Off All Trading Challenges</title>
+    <style>
+      /* Reset styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Base styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333333;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Container */
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        padding: 30px 0;
+        background: linear-gradient(135deg, #151515 0%, #1a1a1a 100%);
+        border-radius: 8px;
+      }
+
+      .header img {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        color: #ffc62d;
+        font-size: 28px;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      /* Content */
+      .content {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid #e0e0e0;
+      }
+
+      /* Hero section */
+      .hero {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .hero h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .hero p {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 25px;
+      }
+
+      /* Promotion banner */
+      .promo-banner {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 198, 45, 0.2),
+          rgba(26, 26, 26, 1)
+        );
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        margin: 30px 0;
+        color: white;
+      }
+
+      .promo-banner h2 {
+        font-size: 32px;
+        color: #ffc62d;
+        margin-bottom: 15px;
+      }
+
+      .promo-banner p {
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+
+      .countdown {
+        background: rgba(255, 198, 45, 0.1);
+        border: 1px solid rgba(255, 198, 45, 0.2);
+        border-radius: 4px;
+        padding: 15px;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      /* Challenge cards */
+      .challenge-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .challenge-card {
+        background: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .challenge-card h3 {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .original-price {
+        color: #999;
+        text-decoration: line-through;
+        font-size: 16px;
+      }
+
+      .discounted-price {
+        color: #ffc62d;
+        font-size: 28px;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+
+      .save-badge {
+        background: #ffc62d;
+        color: #1a1a1a;
+        padding: 5px 10px;
+        border-radius: 100px;
+        font-size: 14px;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 15px;
+      }
+
+      /* Features list */
+      .features-list {
+        margin: 30px 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 198, 45, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      /* Recent withdrawals table */
+      .withdrawals-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .withdrawals-table th {
+        background: #1a1a1a;
+        color: #ffc62d;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .withdrawals-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .withdrawals-table .amount {
+        color: #2e7d32;
+        font-weight: bold;
+      }
+
+      /* CTA Button */
+      .cta-button {
+        display: inline-block;
+        background-color: #ffc62d;
+        color: #1a1a1a;
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 20px 0;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #e6b325;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-size: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      /* Mobile responsiveness */
+      @media screen and (max-width: 600px) {
+        .container {
+          padding: 10px;
+        }
+
+        .content {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 24px;
+        }
+
+        .promo-banner h2 {
+          font-size: 24px;
+        }
+
+        .promo-banner p {
+          font-size: 16px;
+        }
+
+        .challenge-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .features-list {
+          grid-template-columns: 1fr;
+        }
+
+        .cta-button {
+          width: 100%;
+          padding: 12px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img
+          src="https://images.squarespace-cdn.com/content/633b282f66006a532ef90a21/58026c80-ad9d-4a80-9a6d-249948356a70/A-removebg-preview.png"
+          alt="ACI Trading Challenge"
+        />
+        <h1>Limited Time Offer</h1>
+      </div>
+
+      <div class="content">
+        <div class="promo-banner">
+          <h2>35% OFF ALL CHALLENGES</h2>
+          <p>
+            Don't miss this exclusive opportunity to start your trading journey
+          </p>
+          <div class="countdown">Limited Time Offer - Act Now!</div>
+        </div>
+
+        <div class="challenge-grid">
+          <div class="challenge-card">
+            <h3>50K</h3>
+            <div class="original-price">$600</div>
+            <div class="discounted-price">$390</div>
+            <div class="save-badge">SAVE $210</div>
+            <a href="https://www.ascendantcapital.ca" class="cta-button"
+              >GET STARTED</a
+            >
+          </div>
+
+          <div class="challenge-card">
+            <h3>100K</h3>
+            <div class="original-price">$800</div>
+            <div class="discounted-price">$520</div>
+            <div class="save-badge">SAVE $280</div>
+            <a href="https://www.ascendantcapital.ca" class="cta-button"
+              >GET STARTED</a
+            >
+          </div>
+
+          <div class="challenge-card">
+            <h3>200K</h3>
+            <div class="original-price">$1,200</div>
+            <div class="discounted-price">$780</div>
+            <div class="save-badge">SAVE $420</div>
+            <a href="https://www.ascendantcapital.ca" class="cta-button"
+              >GET STARTED</a
+            >
+          </div>
+        </div>
+
+        <div class="features-list">
+          <div class="feature-item">
+            <div class="feature-icon">⚡</div>
+            <div>Unlimited Trading Period</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📈</div>
+            <div>Up to 1:200 Leverage</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <div>Up to 95% Profit Share</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🎯</div>
+            <div>10% Profit Target</div>
+          </div>
+        </div>
+
+        <div style="text-align: center">
+          <h3 style="margin-bottom: 15px">Don't Miss This Opportunity!</h3>
+          <p style="color: #666; margin-bottom: 20px">
+            Join thousands of successful traders who have already taken
+            advantage of our special offer.
+          </p>
+          <a href="https://www.ascendantcapital.ca" class="cta-button"
+            >CLAIM YOUR 35% DISCOUNT NOW</a
+          >
+        </div>
+
+        <h3 style="margin-top: 40px">Recent Successful Withdrawals</h3>
+        <table class="withdrawals-table">
+          <tr>
+            <th>Trader ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>TR7842</td>
+            <td class="amount">$12,450</td>
+            <td>Bitcoin</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>TR5291</td>
+            <td class="amount">$8,730</td>
+            <td>Wire Transfer</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>TR9364</td>
+            <td class="amount">$4,250</td>
+            <td>E-Transfer</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>TR2156</td>
+            <td class="amount">$15,000</td>
+            <td>USDT</td>
+            <td>Completed</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="footer">
+        <p>© 2024 ACI Trading Challenge. All rights reserved.</p>
+        <p>
+          This email was sent to you because you expressed interest in ACI
+          Trading Challenge.
+        </p>
+        <p>Our address: support@ascendantcapital.ca</p>
+      </div>
+    </div>
+  </body>
+</html>

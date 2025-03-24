@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Meet Our Top Performing Traders</title>
+    <style>
+      /* Reset styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Base styles */
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333333;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Container */
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+      }
+
+      /* Header */
+      .header {
+        text-align: center;
+        padding: 30px 0;
+        background: linear-gradient(135deg, #151515 0%, #1a1a1a 100%);
+        border-radius: 8px;
+      }
+
+      .header img {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 20px;
+      }
+
+      .header h1 {
+        color: #ffc62d;
+        font-size: 28px;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      /* Content */
+      .content {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid #e0e0e0;
+      }
+
+      /* Hero section */
+      .hero {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .hero h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 15px;
+      }
+
+      .hero p {
+        font-size: 16px;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 25px;
+      }
+
+      /* Top traders section */
+      .top-traders {
+        margin: 30px 0;
+      }
+
+      .trader-card {
+        background: #1a1a1a;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 20px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .trader-card.gold {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 198, 45, 0.2),
+          rgba(26, 26, 26, 1)
+        );
+      }
+
+      .trader-card.silver {
+        background: linear-gradient(
+          135deg,
+          rgba(192, 192, 192, 0.2),
+          rgba(26, 26, 26, 1)
+        );
+      }
+
+      .trader-card.bronze {
+        background: linear-gradient(
+          135deg,
+          rgba(205, 127, 50, 0.2),
+          rgba(26, 26, 26, 1)
+        );
+      }
+
+      .rank-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .rank-badge.gold {
+        background: #ffc62d;
+        color: #1a1a1a;
+      }
+
+      .rank-badge.silver {
+        background: #c0c0c0;
+        color: #1a1a1a;
+      }
+
+      .rank-badge.bronze {
+        background: #cd7f32;
+        color: #1a1a1a;
+      }
+
+      .trader-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .trader-avatar {
+        font-size: 24px;
+      }
+
+      .trader-details h3 {
+        font-size: 18px;
+        margin-bottom: 5px;
+      }
+
+      .trader-country {
+        color: #999;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .trader-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-label {
+        color: #999;
+        font-size: 12px;
+        margin-bottom: 5px;
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .stat-value.gain {
+        color: #00ff9d;
+      }
+
+      /* Leaderboard table */
+      .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .leaderboard-table th {
+        background: #1a1a1a;
+        color: #ffc62d;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .leaderboard-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .leaderboard-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* Recent withdrawals table */
+      .withdrawals-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .withdrawals-table th {
+        background: #1a1a1a;
+        color: #ffc62d;
+        padding: 12px;
+        text-align: left;
+      }
+
+      .withdrawals-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .withdrawals-table .amount {
+        color: #2e7d32;
+        font-weight: bold;
+      }
+
+      /* CTA Button */
+      .cta-button {
+        display: inline-block;
+        background-color: #ffc62d;
+        color: #1a1a1a;
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 20px 0;
+        text-align: center;
+        transition: background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #e6b325;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+        font-size: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+      }
+
+      /* Mobile responsiveness */
+      @media screen and (max-width: 600px) {
+        .container {
+          padding: 10px;
+        }
+
+        .content {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 24px;
+        }
+
+        .trader-stats {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        .rank-badge {
+          width: 32px;
+          height: 32px;
+          font-size: 16px;
+        }
+
+        .trader-info {
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+        }
+
+        .trader-country {
+          justify-content: center;
+        }
+
+        .cta-button {
+          width: 100%;
+          padding: 12px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <img
+          src="https://images.squarespace-cdn.com/content/633b282f66006a532ef90a21/58026c80-ad9d-4a80-9a6d-249948356a70/A-removebg-preview.png"
+          alt="ACI Trading Challenge"
+        />
+        <h1>Meet Our Top Performing Traders</h1>
+      </div>
+
+      <div class="content">
+        <div class="hero">
+          <h2>Success Stories from Our Trading Community</h2>
+          <p>
+            Discover how our top traders are achieving exceptional results with
+            ACI Trading Challenge. Join our community of successful traders and
+            start your journey to financial freedom.
+          </p>
+        </div>
+
+        <div class="top-traders">
+          <div class="trader-card gold">
+            <div class="rank-badge gold">1</div>
+            <div class="trader-info">
+              <div class="trader-avatar">🥇</div>
+              <div class="trader-details">
+                <h3>Alexander Schmidt</h3>
+                <div class="trader-country"><span>🇩🇪</span> Germany</div>
+              </div>
+            </div>
+            <div class="trader-stats">
+              <div class="stat-item">
+                <div class="stat-label">Profit</div>
+                <div class="stat-value">$32,500</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Equity</div>
+                <div class="stat-value">$82,500</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Gain</div>
+                <div class="stat-value gain">65.0%</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Account Size</div>
+                <div class="stat-value">$50,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="trader-card silver">
+            <div class="rank-badge silver">2</div>
+            <div class="trader-info">
+              <div class="trader-avatar">🥈</div>
+              <div class="trader-details">
+                <h3>James Wilson</h3>
+                <div class="trader-country"><span>🇬🇧</span> United Kingdom</div>
+              </div>
+            </div>
+            <div class="trader-stats">
+              <div class="stat-item">
+                <div class="stat-label">Profit</div>
+                <div class="stat-value">$24,500</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Equity</div>
+                <div class="stat-value">$74,500</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Gain</div>
+                <div class="stat-value gain">49.0%</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Account Size</div>
+                <div class="stat-value">$50,000</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="trader-card bronze">
+            <div class="rank-badge bronze">3</div>
+            <div class="trader-info">
+              <div class="trader-avatar">🥉</div>
+              <div class="trader-details">
+                <h3>Lucas Martin</h3>
+                <div class="trader-country"><span>🇫🇷</span> France</div>
+              </div>
+            </div>
+            <div class="trader-stats">
+              <div class="stat-item">
+                <div class="stat-label">Profit</div>
+                <div class="stat-value">$21,000</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Equity</div>
+                <div class="stat-value">$71,000</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Gain</div>
+                <div class="stat-value gain">42.0%</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Account Size</div>
+                <div class="stat-value">$50,000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table class="leaderboard-table">
+          <tr>
+            <th>Rank</th>
+            <th>Trader</th>
+            <th>Profit</th>
+            <th>Gain %</th>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Chan Tai Man 🇭🇰</td>
+            <td>$18,500</td>
+            <td>37.0%</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Muhammad Khan 🇵🇰</td>
+            <td>$15,000</td>
+            <td>30.0%</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Leonardo Rossi 🇮🇹</td>
+            <td>$12,500</td>
+            <td>25.0%</td>
+          </tr>
+        </table>
+
+        <div style="text-align: center">
+          <h3 style="margin-bottom: 15px">Ready to Join Our Top Traders?</h3>
+          <p style="color: #666; margin-bottom: 20px">
+            Start your journey with ACI Trading Challenge and become our next
+            success story.
+          </p>
+          <a href="https://www.ascendantcapital.ca" class="cta-button"
+            >START TRADING NOW</a
+          >
+        </div>
+
+        <h3 style="margin-top: 40px">Recent Successful Withdrawals</h3>
+        <table class="withdrawals-table">
+          <tr>
+            <th>Trader ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>TR7842</td>
+            <td class="amount">$12,450</td>
+            <td>Bitcoin</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>TR5291</td>
+            <td class="amount">$8,730</td>
+            <td>Wire Transfer</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>TR9364</td>
+            <td class="amount">$4,250</td>
+            <td>E-Transfer</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>TR2156</td>
+            <td class="amount">$15,000</td>
+            <td>USDT</td>
+            <td>Completed</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="footer">
+        <p>© 2024 ACI Trading Challenge. All rights reserved.</p>
+        <p>
+          This email was sent to you because you expressed interest in ACI
+          Trading Challenge.
+        </p>
+        <p>Our address: support@ascendantcapital.ca</p>
+      </div>
+    </div>
+  </body>
+</html>

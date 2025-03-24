@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Instant Funding with Ascendant Challenge!</title>
+    <style>
+      /* Light mode styles */
+      :root {
+        color-scheme: light dark;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+        color: #333333;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+      }
+
+      .header {
+        text-align: center;
+        padding: 30px 0;
+      }
+
+      .header h1 {
+        color: #b38a22;
+        font-size: 28px;
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .content {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 1px solid #e0e0e0;
+      }
+
+      .highlight-banner {
+        background-color: #fff8e6;
+        color: #b38a22;
+        padding: 15px;
+        text-align: center;
+        border-radius: 4px;
+        margin: 20px 0;
+        border: 1px solid #ffeeba;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      /* Table styles */
+      .comparison-table,
+      .transaction-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .comparison-table th,
+      .transaction-table th {
+        background-color: #f8f9fa;
+        color: #333333;
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .comparison-table td,
+      .transaction-table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #e0e0e0;
+        color: #333333;
+      }
+
+      .comparison-table tr:nth-child(even),
+      .transaction-table tr:nth-child(even) {
+        background-color: #fafafa;
+      }
+
+      .highlight {
+        color: #b38a22;
+        font-weight: bold;
+      }
+
+      /* Button styles */
+      .cta-button {
+        display: inline-block;
+        background-color: #b38a22;
+        color: #ffffff;
+        padding: 15px 30px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: bold;
+        margin: 10px 0;
+        border: none;
+      }
+
+      /* Account size buttons */
+      .balance-section {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+        justify-content: center;
+      }
+
+      .balance-button {
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        background: transparent;
+        color: #333333;
+        text-decoration: none;
+        border-radius: 4px;
+        text-align: center;
+        flex: 1;
+        max-width: 150px;
+        font-weight: bold;
+        transition: all 0.2s ease;
+      }
+
+      .balance-button:hover {
+        border-color: #b38a22;
+        background: #fff8e6;
+        color: #b38a22;
+      }
+
+      /* Review section */
+      .review-section {
+        display: flex;
+        gap: 20px;
+        margin: 30px 0;
+        justify-content: center;
+      }
+
+      .review-card {
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        flex: 1;
+        max-width: 250px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .review-header {
+        margin-bottom: 15px;
+      }
+
+      .reviewer-info {
+        flex: 1;
+      }
+
+      .reviewer-name {
+        color: #333333;
+        font-weight: bold;
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .review-stars {
+        color: #b38a22;
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .review-text {
+        color: #666666;
+        font-size: 13px;
+        line-height: 1.5;
+        margin: 0;
+      }
+
+      /* Transaction table */
+      .transaction-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        font-size: 14px;
+        border: 1px solid #e0e0e0;
+      }
+
+      .transaction-table th {
+        background: #f8f9fa;
+        color: #333333;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .transaction-table td {
+        padding: 12px;
+        color: #333333;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .transaction-table .amount {
+        color: #2e7d32;
+        font-weight: bold;
+      }
+
+      .transaction-table .method {
+        color: #b38a22;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #666666;
+        font-size: 12px;
+      }
+
+      /* Mobile responsiveness */
+      @media screen and (max-width: 600px) {
+        .container {
+          padding: 10px;
+        }
+
+        .content {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 24px;
+        }
+
+        .balance-section {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .balance-button {
+          width: 80%;
+          max-width: none;
+        }
+
+        .review-section {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .review-card {
+          max-width: none;
+          width: 100%;
+        }
+
+        .transaction-table {
+          font-size: 12px;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+          padding: 8px;
+        }
+
+        .highlight-banner {
+          font-size: 12px;
+        }
+      }
+
+      /* Dark mode overrides */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #1a1a1a;
+          color: #ffffff;
+        }
+
+        .container,
+        .content,
+        .review-card {
+          background-color: #222222;
+          border-color: #333333;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .highlight-banner {
+          background-color: rgba(179, 138, 34, 0.1);
+          border-color: rgba(179, 138, 34, 0.2);
+        }
+
+        .comparison-table,
+        .transaction-table {
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .comparison-table th,
+        .transaction-table th {
+          background-color: #2a2a2a;
+          color: #ffffff;
+          border-color: #333333;
+        }
+
+        .comparison-table td,
+        .transaction-table td {
+          color: #ffffff;
+          border-color: #333333;
+        }
+
+        .comparison-table tr:nth-child(even),
+        .transaction-table tr:nth-child(even) {
+          background-color: #1f1f1f;
+        }
+
+        .balance-button {
+          border-color: #333333;
+          color: #ffffff;
+        }
+
+        .balance-button:hover {
+          background-color: rgba(179, 138, 34, 0.1);
+        }
+
+        .reviewer-name {
+          color: #ffffff;
+        }
+
+        .review-text {
+          color: #999999;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Get Instantly Funded with Ascendant Challenge</h1>
+      </div>
+
+      <div class="content">
+        <p>Dear Trader,</p>
+
+        <p>
+          Ready to accelerate your trading journey? The Ascendant Challenge
+          offers
+          <span class="highlight">instant funding</span> with our revolutionary
+          one-step evaluation process!
+        </p>
+
+        <div class="highlight-banner">
+          🌟 ONE STEP CHALLENGE - INSTANT FUNDING - UP TO $4M SCALING 🌟
+        </div>
+
+        <table class="comparison-table">
+          <tr>
+            <th>Feature</th>
+            <th>Details</th>
+          </tr>
+          <tr>
+            <td>Leverage</td>
+            <td class="highlight">1:50</td>
+          </tr>
+          <tr>
+            <td>Maximum Loss</td>
+            <td>8% (Stop-out level)</td>
+          </tr>
+          <tr>
+            <td>Profit Target</td>
+            <td>10% (Level 1)</td>
+          </tr>
+          <tr>
+            <td>Trading Period</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td>Profit Split</td>
+            <td>Up to 100%</td>
+          </tr>
+        </table>
+
+        <div style="text-align: center">
+          <p>Choose Your Starting Balance:</p>
+          <div class="balance-section">
+            <a
+              href="https://www.ascendantacademy.ca/funding"
+              class="balance-button"
+              >$10,000</a
+            >
+            <a
+              href="https://www.ascendantacademy.ca/funding"
+              class="balance-button"
+              >$25,000</a
+            >
+            <a
+              href="https://www.ascendantacademy.ca/funding"
+              class="balance-button"
+              >$50,000</a
+            >
+          </div>
+
+          <a href="https://www.ascendantacademy.ca/funding" class="cta-button"
+            >START TRADING NOW</a
+          >
+        </div>
+
+        <div class="review-section">
+          <div class="review-card">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <p class="reviewer-name">David R.</p>
+                <div class="review-stars">★★★★★</div>
+              </div>
+            </div>
+            <p class="review-text">
+              "The one-step evaluation is a game-changer! I got funded within a
+              week and the scaling plan is incredibly generous. Already scaled
+              up twice in three months!"
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <div class="reviewer-info">
+                <p class="reviewer-name">Emma K.</p>
+                <div class="review-stars">★★★★★</div>
+              </div>
+            </div>
+            <p class="review-text">
+              "Started with $25K and scaled to $100K in just two months. The
+              unlimited trading time takes away all the pressure. Best prop firm
+              experience ever!"
+            </p>
+          </div>
+        </div>
+
+        <h3 style="text-align: center">Recent Successful Withdrawals</h3>
+
+        <table class="transaction-table">
+          <tr>
+            <th>Date</th>
+            <th>Trader ID</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+          </tr>
+          <tr>
+            <td>Feb 15, 2025</td>
+            <td>ASC-8924</td>
+            <td class="amount">$4,750</td>
+            <td class="method">USDT</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>Feb 14, 2025</td>
+            <td>ASC-8891</td>
+            <td class="amount">$6,300</td>
+            <td class="method">E-TRANSFER</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>Feb 12, 2025</td>
+            <td>ASC-8856</td>
+            <td class="amount">$3,875</td>
+            <td class="method">BANK TRANSFER</td>
+            <td>Completed</td>
+          </tr>
+          <tr>
+            <td>Feb 11, 2025</td>
+            <td>ASC-8812</td>
+            <td class="amount">$5,150</td>
+            <td class="method">BTC</td>
+            <td>Completed</td>
+          </tr>
+        </table>
+
+        <div style="text-align: center">
+          <a href="https://www.ascendantacademy.ca/funding" class="cta-button"
+            >GET FUNDED TODAY</a
+          >
+        </div>
+
+        <div class="highlight-banner" style="margin-top: 40px">
+          LIMITED TIME OFFER: GET 25% OFF WHEN PAYING WITH CRYPTO
+        </div>
+      </div>
+
+      <div class="footer">
+        <p>© 2025 Ascendant Capital. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>
