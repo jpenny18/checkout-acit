@@ -153,6 +153,42 @@ const SubHeading = styled.p`
   }
 `;
 
+const StarRating = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 1.5rem;
+    justify-content: center;
+    width: 100%;
+    order: 4; // Ensure it appears after the button
+  }
+`;
+
+const Stars = styled.div`
+  display: flex;
+  gap: 2px;
+`;
+
+const Star = styled.span`
+  color: ${props => props.filled ? '#ffc62d' : '#444'};
+  font-size: 1.25rem;
+`;
+
+const RatingText = styled.span`
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+`;
+
 const HeroContent = styled.div`
   max-width: 600px;
 
@@ -165,7 +201,7 @@ const HeroContent = styled.div`
     flex-direction: column;
     align-items: center;
 
-    > ${SubHeading}, > button {
+    > ${SubHeading}, > button, > ${StarRating} {
       order: 3;
     }
 
@@ -211,7 +247,8 @@ const HeroSection = styled.section`
 
   @media (max-width: 768px) {
     padding: 6rem 1rem 8rem;
-    min-height: auto;
+    min-height: 100vh; // Ensure full viewport height on mobile
+    height: auto;
     justify-content: flex-start;
   }
 `;
@@ -1258,6 +1295,8 @@ const MobileWrapper = styled.div`
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-height: calc(100vh - 14rem); // Account for padding
+    justify-content: space-between;
   }
 `;
 
@@ -1285,6 +1324,7 @@ const ContentWrapper = styled.div`
     flex-direction: column;
     align-items: center;
     padding-bottom: 3rem;
+    min-height: 200px; // Add minimum height to ensure content fits
   }
 `;
 
@@ -1416,12 +1456,216 @@ const PopupButton = styled(Button)`
   }
 `;
 
+const ReviewsSection = styled.section`
+  padding: 6rem 2rem;
+  background: linear-gradient(180deg, #222 0%, #1a1a1a 100%);
+  position: relative;
+  overflow: hidden;
+  margin-top: -4rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(0deg, transparent 0%, #222 100%);
+  }
+
+  @media (max-width: 768px) {
+    padding: 4rem 1rem;
+  }
+`;
+
+const ReviewsContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    padding: 0 0.5rem;
+  }
+`;
+
+const ReviewsHeader = styled.div`
+  text-align: center;
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
+`;
+
+const ReviewsTitle = styled.h2`
+  color: white;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+`;
+
+const ReviewsSubtitle = styled.p`
+  color: #999;
+  font-size: 1.1rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`;
+
+const ReviewsScroll = styled.div`
+  display: flex;
+  gap: 2rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  position: relative;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 2rem;
+
+  /* Hide scrollbar but keep functionality */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
+`;
+
+const ReviewCard = styled.div`
+  background: linear-gradient(145deg, rgba(42, 42, 42, 0.8) 0%, rgba(26, 26, 26, 0.9) 100%);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 2rem;
+  min-width: 280px;
+  width: 280px;
+  height: 300px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 198, 45, 0.3);
+    box-shadow: 
+      0 10px 20px rgba(0, 0, 0, 0.2),
+      0 0 15px rgba(255, 198, 45, 0.1);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(180deg, rgba(42, 42, 42, 0.3) 0%, transparent 100%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    min-width: 260px;
+    width: 260px;
+    height: 280px;
+    padding: 1.5rem;
+  }
+`;
+
+const ReviewHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const ReviewStars = styled(Stars)`
+  margin-bottom: 0.5rem;
+`;
+
+const ReviewDate = styled.span`
+  color: #666;
+  font-size: 0.8rem;
+`;
+
+const ReviewContent = styled.div`
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  flex-grow: 1;
+  margin: 1rem 0;
+  position: relative;
+  overflow: hidden;
+  
+  p {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: ${props => props.expanded ? 'none' : '4'};
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+const ReadMoreButton = styled.button`
+  background: none;
+  border: none;
+  color: #ffc62d;
+  font-size: 0.8rem;
+  padding: 0;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: color 0.2s ease;
+  font-weight: 500;
+
+  &:hover {
+    color: #ffdb70;
+  }
+`;
+
+const ReviewAuthor = styled.div`
+  color: #ffc62d;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: rgba(255, 198, 45, 0.3);
+    border-radius: 1px;
+  }
+`;
+
 const LandingPage = () => {
   const [selectedBalance, setSelectedBalance] = useState(50000);
   const [openFAQ, setOpenFAQ] = useState(null);
   const [hasTableScroll, setHasTableScroll] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
   const tableRef = useRef(null);
+  const [expandedReviews, setExpandedReviews] = useState({});
 
   const calculateValues = (balance) => ({
     maxDailyLoss: balance * 0.06,
@@ -1445,6 +1689,96 @@ const LandingPage = () => {
     window.addEventListener('resize', checkScroll);
     return () => window.removeEventListener('resize', checkScroll);
   }, []);
+
+  const scrollToReviews = () => {
+    const reviewsSection = document.getElementById('reviews');
+    if (reviewsSection) {
+      const yOffset = -80; // Offset to account for any fixed headers
+      const y = reviewsSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const reviews = [
+    {
+      rating: 5,
+      content: "Best prop firm I've worked with! The fast-track verification is a game-changer, and their support team responds within minutes. Already scaled to a $200k account!",
+      author: "Michael R.",
+      daysAgo: 1
+    },
+    {
+      rating: 5,
+      content: "Withdrawals are processed lightning fast - usually within 24 hours. Their platform is super stable, and the scaling program is very achievable.",
+      author: "Sarah T.",
+      daysAgo: 3
+    },
+    {
+      rating: 4,
+      content: "Really impressed with their customer service. Had a few questions about the challenge rules and got clear answers right away. The trading conditions are excellent too.",
+      author: "James K.",
+      daysAgo: 5
+    },
+    {
+      rating: 5,
+      content: "Finally found a prop firm that understands traders' needs. No hidden rules, straightforward objectives, and the refundable fee is a great touch!",
+      author: "Emma P.",
+      daysAgo: 8
+    },
+    {
+      rating: 5,
+      content: "Just got funded after passing both phases. The whole process was smooth, and their support team guided me through every step. Highly recommend!",
+      author: "David L.",
+      daysAgo: 12
+    },
+    {
+      rating: 4,
+      content: "The platform is incredibly user-friendly, and the trading conditions are some of the best in the industry. Love the 1:200 leverage option.",
+      author: "Alex M.",
+      daysAgo: 15
+    },
+    {
+      rating: 5,
+      content: "Three months in, and I couldn't be happier. Consistent payouts, great communication, and the scaling plan is very motivating.",
+      author: "Rachel W.",
+      daysAgo: 25
+    },
+    {
+      rating: 5,
+      content: "Their support during volatile market conditions is outstanding. They actually care about their traders' success. Plus, the fees are very competitive.",
+      author: "Thomas H.",
+      daysAgo: 32
+    },
+    {
+      rating: 4,
+      content: "The challenge rules are fair and achievable. What I appreciate most is their transparency - everything is clearly explained from the start.",
+      author: "Lisa B.",
+      daysAgo: 45
+    },
+    {
+      rating: 5,
+      content: "Started with a $50k challenge and now managing $200k. The scaling opportunities are real, and their risk management rules actually help you become a better trader.",
+      author: "Mark S.",
+      daysAgo: 58
+    }
+  ];
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, index) => (
+      <Star key={index} filled={index < rating}>
+        ★
+      </Star>
+    ));
+  };
+
+  const toggleReviewExpansion = (index) => {
+    setExpandedReviews(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
 
   return (
     <PageWrapper>
@@ -1506,6 +1840,12 @@ const LandingPage = () => {
             <Button to="/auth?mode=signup" size="large">
               GET FUNDED TODAY
             </Button>
+            <StarRating onClick={scrollToReviews}>
+              <Stars>
+                {renderStars(4.6)}
+              </Stars>
+              <RatingText>4.6/5 from 236 reviews</RatingText>
+            </StarRating>
           </HeroContent>
           
           <HeroRight>
@@ -1559,6 +1899,12 @@ const LandingPage = () => {
             <Button to="/auth?mode=signup" size="large">
               GET FUNDED TODAY
             </Button>
+            <StarRating onClick={scrollToReviews}>
+              <Stars>
+                {renderStars(4.6)}
+              </Stars>
+              <RatingText>4.6/5 from 236 reviews</RatingText>
+            </StarRating>
           </ContentWrapper>
         </MobileWrapper>
       </HeroSection>
@@ -1893,6 +2239,38 @@ const LandingPage = () => {
           </FAQButton>
         </Container>
       </FAQSection>
+
+      <ReviewsSection id="reviews">
+        <ReviewsContainer>
+          <ReviewsHeader>
+            <ReviewsTitle>Trusted by Traders Worldwide</ReviewsTitle>
+            <ReviewsSubtitle>Join hundreds of successful funded traders</ReviewsSubtitle>
+          </ReviewsHeader>
+          <ReviewsScroll>
+            {reviews.map((review, index) => (
+              <ReviewCard key={index}>
+                <ReviewHeader>
+                  <div>
+                    <ReviewStars>
+                      {renderStars(review.rating)}
+                    </ReviewStars>
+                    <ReviewDate>{review.daysAgo} {review.daysAgo === 1 ? 'day' : 'days'} ago</ReviewDate>
+                  </div>
+                </ReviewHeader>
+                <ReviewContent expanded={expandedReviews[index]}>
+                  <p>{review.content}</p>
+                  {review.content.length > 180 && (
+                    <ReadMoreButton onClick={() => toggleReviewExpansion(index)}>
+                      {expandedReviews[index] ? 'Show less' : 'Read more'}
+                    </ReadMoreButton>
+                  )}
+                </ReviewContent>
+                <ReviewAuthor>{review.author}</ReviewAuthor>
+              </ReviewCard>
+            ))}
+          </ReviewsScroll>
+        </ReviewsContainer>
+      </ReviewsSection>
       
       <Footer>
         <FooterContent>
