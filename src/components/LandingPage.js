@@ -1663,7 +1663,7 @@ const LandingPage = () => {
   const [selectedBalance, setSelectedBalance] = useState(50000);
   const [openFAQ, setOpenFAQ] = useState(null);
   const [hasTableScroll, setHasTableScroll] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
+  const [showPopup, setShowPopup] = useState(false);
   const tableRef = useRef(null);
   const [expandedReviews, setExpandedReviews] = useState({});
 
