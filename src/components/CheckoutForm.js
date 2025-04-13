@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import CryptoPayment from './CryptoPayment';
 import { db } from '../firebase';
 import { collection, addDoc } from 'firebase/firestore';
-import { getCachedCryptoDiscountMultiplier, getCachedCryptoDiscountPercentage } from '../config/promotions';
+import { getCachedCryptoDiscountPercentage } from '../config/promotions';
+import PaymentAccordion from './payment/PaymentAccordion';
+import { initApiHandler } from '../api/api-handler';
 
 const FormContainer = styled.div`
   background-color: #1a1a1a;
@@ -69,32 +70,6 @@ const Input = styled.input`
   }
 `;
 
-const PaymentMethodSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 2rem;
-`;
-
-const PaymentButton = styled.button`
-  padding: 1rem;
-  border: 2px solid ${props => props.selected ? '#ffc62d' : '#333'};
-  background: ${props => props.selected ? 'rgba(255, 198, 45, 0.1)' : 'transparent'};
-  color: ${props => props.selected ? '#ffc62d' : '#fff'};
-  cursor: pointer;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: #ffc62d;
-  }
-`;
-
 const AccountCard = styled.div`
   border: 2px solid #ffc62d;
   border-radius: 4px;
@@ -126,7 +101,24 @@ const PlatformButtons = styled.div`
   gap: 1rem;
 `;
 
-const PlatformButton = styled(PaymentButton)``;
+const PlatformButton = styled.button`
+  padding: 1rem;
+  border: 2px solid ${props => props.selected ? '#ffc62d' : '#333'};
+  background: ${props => props.selected ? 'rgba(255, 198, 45, 0.1)' : 'transparent'};
+  color: ${props => props.selected ? '#ffc62d' : '#fff'};
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #ffc62d;
+  }
+`;
 
 const TermsCheckbox = styled.div`
   display: flex;
@@ -153,35 +145,19 @@ const TermsCheckbox = styled.div`
   }
 `;
 
-const TotalAmount = styled.div`
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-align: right;
-  margin: 2rem 0;
+const SubscriptionNote = styled.div`
+  background-color: rgba(255, 198, 45, 0.1);
+  color: #999;
+  padding: 1rem;
+  border-radius: 4px;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border: 1px solid rgba(255, 198, 45, 0.2);
 
   span {
     color: #ffc62d;
-  }
-`;
-
-const CheckoutButton = styled.button`
-  background-color: #ffc62d;
-  color: black;
-  padding: 1.2rem;
-  border: none;
-  border-radius: 4px;
   font-weight: bold;
-  cursor: pointer;
-  width: 100%;
-  font-size: 1.1rem;
-  
-  &:hover {
-    background-color: #e6b229;
-  }
-
-  &:disabled {
-    background-color: #444;
-    cursor: not-allowed;
   }
 `;
 
@@ -216,69 +192,28 @@ const BackButton = styled.button`
   }
 `;
 
-const AddOnSection = styled.div`
-  margin: 2rem 0;
-  padding: 1.5rem;
-  border: 1px solid #333;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.05);
-`;
-
-const AddOnHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-`;
-
-const InfoIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #ffc62d;
+const ContinueButton = styled.button`
+  background-color: #ffc62d;
   color: black;
-  font-size: 14px;
-  cursor: help;
-  margin-left: 0.5rem;
-`;
+  padding: 1.2rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.1rem;
+  
+  &:hover {
+    background-color: #e6b229;
+  }
 
-const AddOnOption = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-top: 1rem;
-
-  input[type="checkbox"] {
-    margin-top: 0.3rem;
+  &:disabled {
+    background-color: #444;
+    cursor: not-allowed;
   }
 `;
 
-const AddOnDescription = styled.div`
-  color: #999;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-`;
-
-// Stripe payment links for different account sizes
-const STRIPE_LINKS = {
-  50000: {
-    standard: process.env.REACT_APP_STRIPE_LINK_50K,
-    fastPass: process.env.REACT_APP_STRIPE_LINK_50K_FAST
-  },
-  100000: {
-    standard: process.env.REACT_APP_STRIPE_LINK_100K,
-    fastPass: process.env.REACT_APP_STRIPE_LINK_100K_FAST
-  },
-  200000: {
-    standard: process.env.REACT_APP_STRIPE_LINK_200K,
-    fastPass: process.env.REACT_APP_STRIPE_LINK_200K_FAST
-  }
-};
-
-function CheckoutForm({ selectedBalance, onBack }) {
+function CheckoutForm({ selectedBalance, onBack, values }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -286,13 +221,16 @@ function CheckoutForm({ selectedBalance, onBack }) {
     phone: ''
   });
 
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [selectedPlatform, setSelectedPlatform] = useState('mt5');
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [showCryptoPayment, setShowCryptoPayment] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState('mt4');
-  const [fastPassSelected, setFastPassSelected] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+
+  // Initialize our simulated API handler
+  useEffect(() => {
+    initApiHandler();
+  }, []);
 
   // Add initialization effect
   useEffect(() => {
@@ -303,12 +241,11 @@ function CheckoutForm({ selectedBalance, onBack }) {
     return () => clearTimeout(timer);
   }, []);
 
-  const basePrice = selectedBalance === 50000 ? 400 : 
-                   selectedBalance === 100000 ? 600 : 999;
-
-  const finalAmount = (paymentMethod === 'crypto' 
-    ? basePrice * (fastPassSelected ? 2 : 1) * getCachedCryptoDiscountMultiplier()
-    : basePrice * (fastPassSelected ? 2 : 1));
+  // Get monthly price based on account size
+  const getMonthlyPrice = () => {
+    return selectedBalance === 50000 ? 99 :
+           selectedBalance === 100000 ? 149 : 249;
+  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -340,13 +277,12 @@ function CheckoutForm({ selectedBalance, onBack }) {
       },
       orderDetails: {
         accountSize: selectedBalance,
-        basePrice,
-        finalAmount,
+        basePrice: getMonthlyPrice(),
+        finalAmount: getMonthlyPrice(),
         platform: selectedPlatform,
-        paymentMethod,
-        cryptoDiscount: paymentMethod === 'crypto',
-        fastPass: fastPassSelected,
-        cryptoType: null // Set to null for both crypto and card payments initially
+        paymentMethod: null, // Will be set during payment
+        isSubscription: true,
+        subscriptionInterval: 'month'
       },
       status: 'pending',
       paymentDetails: null
@@ -362,11 +298,6 @@ function CheckoutForm({ selectedBalance, onBack }) {
   };
 
   const handleContinueToPayment = async () => {
-    console.log('Starting payment process...');
-    console.log('Payment method:', paymentMethod);
-    console.log('Selected balance:', selectedBalance);
-    console.log('Fast pass:', fastPassSelected);
-
     const orderId = await saveOrderData();
     if (!orderId) {
       alert('There was an error processing your order. Please try again.');
@@ -374,43 +305,16 @@ function CheckoutForm({ selectedBalance, onBack }) {
     }
 
     setCurrentOrderId(orderId);
-    console.log('Order ID:', orderId);
+    setShowPaymentMethods(true);
+  };
 
-    if (paymentMethod === 'crypto') {
-      setShowCryptoPayment(true);
-    } else {
-      const stripeLink = STRIPE_LINKS[selectedBalance][fastPassSelected ? 'fastPass' : 'standard'];
-      console.log('Stripe link:', stripeLink);
-      
-      if (!stripeLink) {
-        console.error('Payment link not found:', {
-          selectedBalance,
-          fastPassSelected,
-          availableLinks: STRIPE_LINKS
-        });
-        alert('Payment link not found. Please try again or contact support.');
-        return;
-      }
-
-      const finalUrl = `${stripeLink}?prefilled_email=${encodeURIComponent(formData.email)}&client_reference_id=${orderId}`;
-      console.log('Final URL:', finalUrl);
-      
-      const isInIframe = window !== window.parent;
-      console.log('Is in iframe:', isInIframe);
-      
-      if (isInIframe) {
-        try {
-          console.log('Attempting parent window redirect...');
-          window.parent.location.href = finalUrl;
-        } catch (e) {
-          console.log('Parent redirect failed, opening new tab...', e);
-          window.open(finalUrl, '_blank', 'noopener,noreferrer');
-        }
-      } else {
-        console.log('Performing direct redirect...');
-        window.location.href = finalUrl;
-      }
-    }
+  const handleSubscriptionComplete = (subscriptionId) => {
+    // Handle successful subscription
+    console.log(`Subscription completed with ID: ${subscriptionId}`);
+    
+    // Redirect to success page or show success message
+    // For now, just go back to challenge page
+    onBack();
   };
 
   if (isInitializing) {
@@ -422,12 +326,27 @@ function CheckoutForm({ selectedBalance, onBack }) {
     );
   }
 
-  if (showCryptoPayment) {
-    return <CryptoPayment 
-      amount={finalAmount} 
-      onBack={() => setShowCryptoPayment(false)}
+  if (showPaymentMethods && currentOrderId) {
+    return (
+      <FormContainer>
+        <BackButton onClick={() => setShowPaymentMethods(false)}>← Back to Information</BackButton>
+        
+        <AccountCard>
+          <AccountSize>${selectedBalance.toLocaleString()}</AccountSize>
+          <AccountPrice>Monthly Price: ${getMonthlyPrice()}/month</AccountPrice>
+        </AccountCard>
+        
+        <FormTitle>Choose Payment Method</FormTitle>
+        
+        <PaymentAccordion 
+          customerInfo={formData}
+          selectedBalance={selectedBalance}
+          onSubscriptionComplete={handleSubscriptionComplete}
+          cryptoDiscountPercentage={getCachedCryptoDiscountPercentage()}
       orderId={currentOrderId}
-    />;
+        />
+      </FormContainer>
+    );
   }
 
   return (
@@ -436,8 +355,13 @@ function CheckoutForm({ selectedBalance, onBack }) {
       
       <AccountCard>
         <AccountSize>${selectedBalance.toLocaleString()}</AccountSize>
-        <AccountPrice>Base Price: ${basePrice.toLocaleString()}</AccountPrice>
+        <AccountPrice>Monthly Price: ${getMonthlyPrice()}/month</AccountPrice>
       </AccountCard>
+
+      <SubscriptionNote>
+        <span>Subscription:</span> You are signing up for a monthly subscription. You can cancel anytime.
+        Your card will be charged ${getMonthlyPrice()} per month until you cancel. Cancelling your subscription will immediately forfeit your account.
+      </SubscriptionNote>
 
       <FormSection>
         <FormTitle>Contact Information</FormTitle>
@@ -509,50 +433,6 @@ function CheckoutForm({ selectedBalance, onBack }) {
         </PlatformButtons>
       </FormSection>
 
-      <FormSection>
-        <FormTitle>Payment Method</FormTitle>
-        <PaymentMethodSection>
-          <PaymentButton
-            selected={paymentMethod === 'card'}
-            onClick={() => setPaymentMethod('card')}
-          >
-            💳 Credit/Debit Card
-          </PaymentButton>
-          <PaymentButton
-            selected={paymentMethod === 'crypto'}
-            onClick={() => setPaymentMethod('crypto')}
-          >
-            ₿ Crypto (-{getCachedCryptoDiscountPercentage()}%)
-          </PaymentButton>
-        </PaymentMethodSection>
-      </FormSection>
-
-      <AddOnSection>
-        <AddOnHeader>
-          <FormTitle style={{ margin: 0 }}>Add-ons</FormTitle>
-        </AddOnHeader>
-        <AddOnOption>
-          <input
-            type="checkbox"
-            id="fastPass"
-            checked={fastPassSelected}
-            onChange={(e) => setFastPassSelected(e.target.checked)}
-          />
-          <div>
-            <label htmlFor="fastPass" style={{ color: '#fff', fontWeight: 'bold' }}>
-              Fast Pass
-              <InfoIcon title="Skip verification stage and move directly to funded stage after passing the first step">
-                i
-              </InfoIcon>
-            </label>
-            <AddOnDescription>
-              Allows you to skip the verification stage and move on to the funded stage right after passing the first step. 
-              It costs as much as your challenge account costs. Your crypto discount will still be applied.
-            </AddOnDescription>
-          </div>
-        </AddOnOption>
-      </AddOnSection>
-
       <TermsCheckbox>
         <input
           type="checkbox"
@@ -561,26 +441,16 @@ function CheckoutForm({ selectedBalance, onBack }) {
           onChange={(e) => setTermsAccepted(e.target.checked)}
         />
         <label htmlFor="terms">
-          I have read and agree to the <a href="https://www.ascendantcapital.ca/disclaimer" target="_blank" rel="noopener noreferrer">Terms & Conditions</a> and <a href="https://www.ascendantcapital.ca/refundpolicy" target="_blank" rel="noopener noreferrer">Refund/Dispute Policy</a>
+          I have read and agree to the <a href="https://www.ascendantcapital.ca/disclaimer" target="_blank" rel="noopener noreferrer">Terms & Conditions</a> and <a href="https://www.ascendantcapital.ca/refundpolicy" target="_blank" rel="noopener noreferrer">Refund/Dispute Policy</a>. I understand that I am signing up for a monthly subscription that will be automatically renewed until I cancel.
         </label>
       </TermsCheckbox>
 
-      <TotalAmount>
-        Total Amount: <span>${finalAmount.toLocaleString()}</span>
-        {paymentMethod === 'crypto' && 
-          <div style={{ fontSize: '0.9rem', color: '#999' }}>{getCachedCryptoDiscountPercentage()}% crypto discount applied</div>
-        }
-        {fastPassSelected &&
-          <div style={{ fontSize: '0.9rem', color: '#999' }}>Fast Pass included</div>
-        }
-      </TotalAmount>
-
-      <CheckoutButton 
+      <ContinueButton 
         disabled={!isFormValid()} 
         onClick={handleContinueToPayment}
       >
         Continue to payment
-      </CheckoutButton>
+      </ContinueButton>
     </FormContainer>
   );
 }

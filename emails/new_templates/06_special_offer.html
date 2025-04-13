@@ -120,7 +120,7 @@
       .challenge-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        gap: 15px;
         margin: 30px 0;
       }
 
@@ -128,13 +128,17 @@
         background: #f8f9fa;
         border: 1px solid #e0e0e0;
         border-radius: 8px;
-        padding: 20px;
+        padding: 15px;
         text-align: center;
+        min-width: 0;
       }
 
       .challenge-card h3 {
         color: #333;
-        font-size: 24px;
+        font-size: 22px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         margin-bottom: 10px;
       }
 
@@ -142,6 +146,9 @@
         color: #999;
         text-decoration: line-through;
         font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .discounted-price {
@@ -149,6 +156,9 @@
         font-size: 28px;
         font-weight: bold;
         margin: 10px 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .save-badge {
@@ -345,7 +355,7 @@
           </div>
           <div class="feature-item">
             <div class="feature-icon">🎯</div>
-            <div>10% Profit Target</div>
+            <div>Easy Targets</div>
           </div>
         </div>
 
@@ -369,26 +379,26 @@
             <th>Status</th>
           </tr>
           <tr>
-            <td>TR7842</td>
-            <td class="amount">$12,450</td>
+            <td>TR8234</td>
+            <td class="amount">$9,850</td>
             <td>Bitcoin</td>
             <td>Completed</td>
           </tr>
           <tr>
-            <td>TR5291</td>
-            <td class="amount">$8,730</td>
+            <td>TR1567</td>
+            <td class="amount">$16,420</td>
             <td>Wire Transfer</td>
             <td>Completed</td>
           </tr>
           <tr>
-            <td>TR9364</td>
-            <td class="amount">$4,250</td>
+            <td>TR4982</td>
+            <td class="amount">$7,890</td>
             <td>E-Transfer</td>
             <td>Completed</td>
           </tr>
           <tr>
-            <td>TR2156</td>
-            <td class="amount">$15,000</td>
+            <td>TR3715</td>
+            <td class="amount">$11,250</td>
             <td>USDT</td>
             <td>Completed</td>
           </tr>

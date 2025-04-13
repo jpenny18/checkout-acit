@@ -13,6 +13,7 @@ import Payouts from './Payouts';
 import MyAccounts from './MyAccounts';
 import FAQ from './FAQ';
 import FAQDetail from './FAQDetail';
+import PaymentSuccess from './payment/PaymentSuccess';
 
 const HamburgerButton = styled.button`
   display: none;
@@ -679,12 +680,15 @@ const Dashboard = () => {
   };
 
   const calculateValues = (balance) => {
+    const monthlyPrice = balance === 50000 ? 99 : 
+                         balance === 100000 ? 149 : 249;
+    
     return {
       maxDailyLoss: balance * 0.06,
       maxLoss: balance * 0.12,
       profitTargetStep1: balance * 0.10,
       profitTargetStep2: balance * 0.05,
-      refundableFee: balance === 50000 ? 400 : balance === 100000 ? 600 : 999
+      monthlyPrice: monthlyPrice
     };
   };
 
@@ -852,6 +856,7 @@ const Dashboard = () => {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/faq/:category/:question" element={<FAQDetail />} />
+          <Route path="/success" element={<PaymentSuccess />} />
           <Route path="/profile" element={
             <>
               <ProfilePage />
@@ -912,6 +917,11 @@ const ChallengeContent = ({
   values,
   setShowCheckout
 }) => {
+  const getMonthlyPrice = (balance) => {
+    return balance === 50000 ? 99 :
+           balance === 100000 ? 149 : 249;
+  };
+
   return (
     <ChallengeContainer>
       <Header>Configure and start ACI Challenge</Header>
@@ -980,23 +990,45 @@ const ChallengeContent = ({
             <div>1:200</div>
           </TableRow>
 
+
           <TableRow>
-            <div>Fast Pass</div>
-            <div>X</div>
-            <HighlightedCell>YES</HighlightedCell>
-            <div>X</div>
+            <div>Monthly Price</div>
+            <HighlightedCell>${getMonthlyPrice(selectedBalance)}/month</HighlightedCell>
+            <div>-</div>
+            <div>${getMonthlyPrice(selectedBalance)}/month</div>
           </TableRow>
 
           <TableRow>
-            <div>Refundable Fee</div>
-            <HighlightedCell>${values.refundableFee}</HighlightedCell>
-            <div>Free</div>
-            <div>Refund</div>
+            <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+              Risk Desk Setup Fee
+              <div 
+                style={{
+                  cursor: 'help',
+                  fontSize: '14px',
+                  color: '#666',
+                  border: '1px solid #ccc',
+                  borderRadius: '50%',
+                  width: '16px',
+                  height: '16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                title="This is a one-time activation fee charged when you pass the challenge to activate your funded account"
+              >
+                i
+              </div>
+            </div>
+            <div>X</div>
+            <div>X</div>
+            <HighlightedCell>
+              ${selectedBalance === 50000 ? '150' : selectedBalance === 100000 ? '200' : '300'}
+            </HighlightedCell>
           </TableRow>
         </Table>
 
         <PromotionBanner>
-          SAVE 35% ON ALL CHALLENGES - "35OFF"
+          <span style={{textDecoration: 'underline', fontStyle: 'italic'}}>ACI Traders qualify for our <a href="/once-funded-stay-funded">Once Funded Stay Funded Program!</a></span>
         </PromotionBanner>
 
         <StartButton onClick={() => setShowCheckout(true)}>

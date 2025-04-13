@@ -1672,7 +1672,8 @@ const LandingPage = () => {
     maxLoss: balance * 0.12,
     profitTargetStep1: balance * 0.10,
     profitTargetStep2: balance * 0.05,
-    refundableFee: balance === 50000 ? 400 : balance === 100000 ? 600 : 999
+    refundableFee: balance === 50000 ? 400 : balance === 100000 ? 600 : 999,
+    monthlyPrice: balance === 50000 ? 99 : balance === 100000 ? 149 : 249
   });
 
   const values = calculateValues(selectedBalance);
@@ -1957,91 +1958,114 @@ const LandingPage = () => {
       </ProcessSection>
       
       <ChallengeSection id="accounts">
-        <SectionTitle>Choose Your Account Size</SectionTitle>
-        <BalanceSection>
-          {[50000, 100000, 200000].map(balance => (
-            <BalanceButton
-              key={balance}
-              selected={balance === selectedBalance}
-              onClick={() => setSelectedBalance(balance)}
-            >
-              ${balance.toLocaleString()}
-            </BalanceButton>
-          ))}
-        </BalanceSection>
+        <div style={{transform: 'scale(0.85)', transformOrigin: 'top center'}}>
+          <SectionTitle>Choose Your Account Size</SectionTitle>
+          <BalanceSection>
+            {[50000, 100000, 200000].map(balance => (
+              <BalanceButton
+                key={balance}
+                selected={balance === selectedBalance}
+                onClick={() => setSelectedBalance(balance)}
+              >
+                ${balance.toLocaleString()}
+              </BalanceButton>
+            ))}
+          </BalanceSection>
 
-        <Table ref={tableRef} hasScroll={hasTableScroll}>
-          <TableHeader>
-            <div></div>
-            <div>ACI CHALLENGE</div>
-            <div>VERIFICATION</div>
-            <div>ACI TRADER</div>
-          </TableHeader>
+          <Table ref={tableRef} hasScroll={hasTableScroll}>
+            <TableHeader>
+              <div></div>
+              <div>ACI CHALLENGE</div>
+              <div>VERIFICATION</div>
+              <div>ACI TRADER</div>
+            </TableHeader>
 
-          <TableRow>
-            <div>Trading Period</div>
-            <div>Unlimited</div>
-            <div>Unlimited</div>
-            <div>Unlimited</div>
-          </TableRow>
+            <TableRow>
+              <div>Trading Period</div>
+              <div>Unlimited</div>
+              <div>Unlimited</div>
+              <div>Unlimited</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Minimum Profitable Days</div>
-            <div>4 Days</div>
-            <div>4 Days</div>
-            <div>X</div>
-          </TableRow>
+            <TableRow>
+              <div>Minimum Profitable Days</div>
+              <div>4 Days</div>
+              <div>4 Days</div>
+              <div>X</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Maximum Daily Loss</div>
-            <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-            <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-            <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-          </TableRow>
+            <TableRow>
+              <div>Maximum Daily Loss</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Maximum Loss</div>
-            <div>${values.maxLoss.toLocaleString()} (12%)</div>
-            <div>${values.maxLoss.toLocaleString()} (12%)</div>
-            <div>${values.maxLoss.toLocaleString()} (12%)</div>
-          </TableRow>
+            <TableRow>
+              <div>Maximum Loss</div>
+              <div>${values.maxLoss.toLocaleString()} (12%)</div>
+              <div>${values.maxLoss.toLocaleString()} (12%)</div>
+              <div>${values.maxLoss.toLocaleString()} (12%)</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Profit Target</div>
-            <div>${values.profitTargetStep1.toLocaleString()} (10%)</div>
-            <div>${values.profitTargetStep2.toLocaleString()} (5%)</div>
-            <div>X</div>
-          </TableRow>
+            <TableRow>
+              <div>Profit Target</div>
+              <div>${values.profitTargetStep1.toLocaleString()} (10%)</div>
+              <div>${values.profitTargetStep2.toLocaleString()} (5%)</div>
+              <div>X</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Leverage</div>
-            <div>1:200</div>
-            <div>1:200</div>
-            <div>1:200</div>
-          </TableRow>
+            <TableRow>
+              <div>Leverage</div>
+              <div>1:200</div>
+              <div>1:200</div>
+              <div>1:200</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Fast Pass</div>
-            <div>X</div>
-            <HighlightedCell>YES</HighlightedCell>
-            <div>X</div>
-          </TableRow>
+            <TableRow>
+              <div>Monthly Price</div>
+              <HighlightedCell>${values.monthlyPrice}/month</HighlightedCell>
+              <div>-</div>
+              <div>${values.monthlyPrice}/month</div>
+            </TableRow>
 
-          <TableRow>
-            <div>Refundable Fee</div>
-            <HighlightedCell>${values.refundableFee}</HighlightedCell>
-            <div>Free</div>
-            <div>Refund</div>
-          </TableRow>
-        </Table>
+             <TableRow>
+              <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
+                Risk Desk Setup Fee
+                <div 
+                  style={{
+                    cursor: 'help',
+                    fontSize: '14px',
+                    color: '#666',
+                    border: '1px solid #ccc',
+                    borderRadius: '50%',
+                    width: '16px',
+                    height: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                  title="This is a one-time activation fee charged when you pass the challenge to activate your funded account"
+                >
+                  i
+                </div>
+              </div>
+              <div>X</div>
+              <div>X</div>
+              <HighlightedCell>
+                ${selectedBalance === 50000 ? '150' : selectedBalance === 100000 ? '200' : '300'}
+              </HighlightedCell>
+            </TableRow>
+          </Table>
 
-        <PromotionBanner>
-          SAVE 35% ON ALL CHALLENGES - "35OFF"
-        </PromotionBanner>
+          <PromotionBanner>
+            ACI Traders qualify for our <a href="/once-funded-stay-funded">Once Funded Stay Funded Program!</a>
+          </PromotionBanner>
 
-        <StartButton to="/auth?mode=signup">
-          START ACI CHALLENGE
-        </StartButton>
+          <StartButton to="/auth?mode=signup">
+            START ACI CHALLENGE
+          </StartButton>
+        </div>
       </ChallengeSection>
 
       <FeaturesSection id="features">

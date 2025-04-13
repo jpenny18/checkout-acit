@@ -10,6 +10,10 @@ const Container = styled.div`
   color: white;
   padding: 2rem;
   border-radius: 8px;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 `;
 
 const BackButton = styled.button`
@@ -32,6 +36,11 @@ const Title = styled.h2`
   color: white;
   margin-bottom: 2rem;
   text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const Amount = styled.div`
@@ -39,6 +48,11 @@ const Amount = styled.div`
   font-size: 2rem;
   margin-bottom: 2rem;
   color: #ffc62d;
+  
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const CryptoOptionsGrid = styled.div`
@@ -46,12 +60,20 @@ const CryptoOptionsGrid = styled.div`
   gap: 2rem;
   max-width: 600px;
   margin: 0 auto;
+  
+  @media (max-width: 768px) {
+    gap: 1rem;
+  }
 `;
 
 const CryptoOption = styled.div`
   border: 1px solid #333;
   border-radius: 8px;
   padding: 1.5rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
   
   &:hover {
     border-color: #ffc62d;
@@ -74,6 +96,12 @@ const QRCode = styled.div`
   padding: 1rem;
   border-radius: 4px;
   
+  @media (max-width: 768px) {
+    width: 120px;
+    height: 120px;
+    padding: 0.75rem;
+  }
+  
   img {
     width: 100%;
     height: 100%;
@@ -89,12 +117,17 @@ const AddressBox = styled.div`
   border-radius: 4px;
   margin-bottom: 1rem;
   
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+  
   input {
     background: transparent;
     border: none;
     color: white;
     flex: 1;
     padding: 0.5rem;
+    width: 100%;
     
     &:focus {
       outline: none;
@@ -390,7 +423,6 @@ function CryptoPayment({ amount, onBack, orderId }) {
       <BackButton onClick={onBack}>← Back to Checkout</BackButton>
       
       <Title>Crypto Payment</Title>
-      <DiscountBadge>{getCachedCryptoDiscountPercentage()}% Crypto Discount Applied</DiscountBadge>
       <Amount>${amount.toLocaleString()}</Amount>
 
       {error && (

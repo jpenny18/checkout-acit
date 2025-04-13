@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { auth, db } from '../firebase';
 import { updatePassword, updateEmail } from 'firebase/auth';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 const ProfileContainer = styled.div`
   max-width: 600px;
@@ -111,6 +111,86 @@ const SuccessMessage = styled.div`
   margin-top: 0.5rem;
 `;
 
+const SubscriptionCard = styled.div`
+  background: rgba(26, 26, 26, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const SubscriptionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const SubscriptionInfo = styled.div`
+  color: #fff;
+`;
+
+const SubscriptionAmount = styled.div`
+  font-size: 1.25rem;
+  color: #ffc62d;
+  font-weight: bold;
+`;
+
+const SubscriptionStatus = styled.div`
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  background: ${props => 
+    props.status === 'active' ? 'rgba(76, 175, 80, 0.2)' :
+    props.status === 'canceled' ? 'rgba(244, 67, 54, 0.2)' :
+    'rgba(255, 198, 45, 0.2)'};
+  color: ${props => 
+    props.status === 'active' ? '#4caf50' :
+    props.status === 'canceled' ? '#f44336' :
+    '#ffc62d'};
+`;
+
+const CancelButton = styled(Button)`
+  background: #ff4444;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  margin-top: 0;
+
+  &:hover {
+    background: #cc0000;
+  }
+`;
+
+const ConfirmationModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+`;
+
+const ModalButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+`;
+
 const ProfilePage = () => {
   const [personalDetails, setPersonalDetails] = useState({
     firstName: '',
@@ -132,6 +212,12 @@ const ProfilePage = () => {
   const [success, setSuccess] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedSubscription, setSelectedSubscription] = useState(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+  const [subscriptionError, setSubscriptionError] = useState('');
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -158,6 +244,37 @@ const ProfilePage = () => {
     };
 
     fetchUserDetails();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const subscriptionsQuery = query(
+            collection(db, 'subscriptions'),
+            where('customerId', '==', user.uid)
+          );
+          
+          const querySnapshot = await getDocs(subscriptionsQuery);
+          const subscriptionData = [];
+          
+          querySnapshot.forEach((doc) => {
+            subscriptionData.push({
+              id: doc.id,
+              ...doc.data()
+            });
+          });
+          
+          setSubscriptions(subscriptionData);
+        }
+      } catch (err) {
+        console.error('Error fetching subscriptions:', err);
+        setSubscriptionError('Failed to load subscriptions');
+      }
+    };
+
+    fetchSubscriptions();
   }, []);
 
   const handleDetailsChange = (e) => {
@@ -226,6 +343,41 @@ const ProfilePage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCancelSubscription = async (subscriptionId) => {
+    setSubscriptionLoading(true);
+    try {
+      const response = await fetch('/api/cancel-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ subscriptionId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel subscription');
+      }
+
+      setSubscriptions(subscriptions.map(sub => 
+        sub.id === subscriptionId 
+          ? { ...sub, status: 'canceled' }
+          : sub
+      ));
+
+      setShowCancelModal(false);
+      setSelectedSubscription(null);
+    } catch (err) {
+      console.error('Error canceling subscription:', err);
+      setSubscriptionError('Failed to cancel subscription');
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
+
+  const formatPrice = (amount) => {
+    return `$${amount}/month`;
   };
 
   return (
@@ -350,6 +502,69 @@ const ProfilePage = () => {
           {passwordSuccess && <SuccessMessage>{passwordSuccess}</SuccessMessage>}
         </Form>
       </Section>
+
+      <Section>
+        <SectionTitle>Your Subscriptions</SectionTitle>
+        {subscriptionError && <ErrorMessage>{subscriptionError}</ErrorMessage>}
+        {subscriptions.length === 0 ? (
+          <div style={{ color: '#999' }}>No active subscriptions found.</div>
+        ) : (
+          subscriptions.map((subscription) => (
+            <SubscriptionCard key={subscription.id}>
+              <SubscriptionHeader>
+                <SubscriptionInfo>
+                  <SubscriptionAmount>
+                    {formatPrice(subscription.amount)}
+                  </SubscriptionAmount>
+                  <div style={{ color: '#999', fontSize: '0.875rem' }}>
+                    Next billing date: {new Date(subscription.currentPeriodEnd).toLocaleDateString()}
+                  </div>
+                </SubscriptionInfo>
+                <SubscriptionStatus status={subscription.status}>
+                  {subscription.status.charAt(0).toUpperCase() + subscription.status.slice(1)}
+                </SubscriptionStatus>
+              </SubscriptionHeader>
+              
+              {subscription.status === 'active' && (
+                <CancelButton
+                  onClick={() => {
+                    setSelectedSubscription(subscription);
+                    setShowCancelModal(true);
+                  }}
+                  disabled={subscriptionLoading}
+                >
+                  Cancel Subscription
+                </CancelButton>
+              )}
+            </SubscriptionCard>
+          ))
+        )}
+      </Section>
+
+      {showCancelModal && selectedSubscription && (
+        <ConfirmationModal>
+          <ModalContent>
+            <h3 style={{ color: '#fff', marginBottom: '1rem' }}>Cancel Subscription</h3>
+            <p style={{ color: '#999', marginBottom: '1rem' }}>
+              Are you sure you want to cancel this subscription? This action cannot be undone.
+            </p>
+            <ModalButtons>
+              <Button
+                onClick={() => setShowCancelModal(false)}
+                style={{ background: '#666' }}
+              >
+                Keep Subscription
+              </Button>
+              <CancelButton
+                onClick={() => handleCancelSubscription(selectedSubscription.id)}
+                disabled={subscriptionLoading}
+              >
+                {subscriptionLoading ? 'Canceling...' : 'Yes, Cancel'}
+              </CancelButton>
+            </ModalButtons>
+          </ModalContent>
+        </ConfirmationModal>
+      )}
     </ProfileContainer>
   );
 };

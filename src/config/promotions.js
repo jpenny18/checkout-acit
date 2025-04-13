@@ -3,9 +3,9 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 
 let cachedPromotions = {
   cryptoDiscount: {
-    percentage: 35,
-    enabled: true,
-    description: 'Crypto payment discount',
+    percentage: 0,
+    enabled: false,
+    description: 'Crypto payment',
     code: 'CRYPTO',
     type: 'payment_method'
   }
@@ -58,25 +58,23 @@ export const getCryptoDiscountMultiplier = async () => {
   if (Date.now() - lastFetch > CACHE_DURATION) {
     await fetchPromotions();
   }
-  const discount = cachedPromotions.CRYPTO?.percentage || 35;
-  return (100 - discount) / 100;
+  return 1; // Always return 1 (no discount)
 };
 
 export const getCryptoDiscountPercentage = async () => {
   if (Date.now() - lastFetch > CACHE_DURATION) {
     await fetchPromotions();
   }
-  return cachedPromotions.CRYPTO?.percentage || 35;
+  return 0; // Always return 0 (no discount)
 };
 
 // For components that need synchronous access
 export const getCachedCryptoDiscountPercentage = () => {
-  return cachedPromotions.CRYPTO?.percentage || 35;
+  return 0; // Always return 0 (no discount)
 };
 
 export const getCachedCryptoDiscountMultiplier = () => {
-  const discount = cachedPromotions.CRYPTO?.percentage || 35;
-  return (100 - discount) / 100;
+  return 1; // Always return 1 (no discount)
 };
 
 export default {
