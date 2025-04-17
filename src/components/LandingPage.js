@@ -1836,7 +1836,7 @@ const LandingPage = () => {
               <span>Ascend to new heights.</span>
             </MainHeading>
             <SubHeading>
-              Join the fastest-growing proprietary trading firm, scale up to $1,000,000 in trading capital, and leverage cutting-edge technology to maximize your trading potential.
+              Become part of the most rapidly expanding prop trading firm, grow your capital to $4,000,000, and utilize advanced technology to enhance your trading success.
             </SubHeading>
             <Button to="/auth?mode=signup" size="large">
               GET FUNDED TODAY
@@ -1895,7 +1895,7 @@ const LandingPage = () => {
 
           <ContentWrapper>
             <SubHeading>
-              Join the fastest-growing proprietary trading firm, scale up to $1,000,000 in trading capital, and leverage cutting-edge technology to maximize your trading potential.
+              Become part of the most rapidly expanding prop trading firm, grow your capital to $4,000,000, and utilize advanced technology to enhance your trading success.
             </SubHeading>
             <Button to="/auth?mode=signup" size="large">
               GET FUNDED TODAY
@@ -1942,7 +1942,7 @@ const LandingPage = () => {
                 <h3>STEP 3</h3>
                 <h4>ACI TRADER</h4>
                 <p>
-                  Advancing to another step demonstrates commitment and talent, leading to an ACI Traders Account with fictitious funds of up to $1,000,000 in a demo environment. Despite being a demo, it'll increase your reward of up to 95% of simulated profits without risking their own capital.
+                  Advancing to another step demonstrates commitment and talent, leading to an ACI Traders Account with fictitious funds of up to $4,000,000 in a demo environment. Despite being a demo, it'll increase your reward of up to 95% of simulated profits without risking their own capital.
                 </p>
               </Step>
               <AccountDetails>
@@ -2144,7 +2144,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 1 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 1}>
-                Join ACI Trading to access professional trading capital up to $200,000, benefit from our cutting-edge technology, and become part of an elite trading community. We offer competitive profit splits and comprehensive support to help you succeed.
+                Join ACI Trading to access professional trading capital up to $4,000,000, benefit from our cutting-edge technology, and become part of an elite trading community. We offer competitive profit splits and comprehensive support to help you succeed.
               </FAQAnswer>
             </FAQCard>
 
@@ -2184,7 +2184,7 @@ const LandingPage = () => {
                 <span>{openFAQ === 5 ? '−' : '+'}</span>
               </FAQQuestion>
               <FAQAnswer isOpen={openFAQ === 5}>
-                Yes, we offer a comprehensive scaling plan that allows successful traders to increase their trading capital up to $1,000,000. The plan is based on consistent performance and adherence to our trading rules.
+                Yes, we offer a comprehensive scaling plan that allows successful traders to increase their trading capital up to $4,000,000. The plan is based on consistent performance and adherence to our trading rules.
               </FAQAnswer>
             </FAQCard>
 
