@@ -1,16 +1,19 @@
 // Test script for payment flows
 const STRIPE_LINKS = {
+  10000: {
+    standard: process.env.REACT_APP_STRIPE_LINK_10K
+  },
+  25000: {
+    standard: process.env.REACT_APP_STRIPE_LINK_25K
+  },
   50000: {
-    standard: process.env.REACT_APP_STRIPE_LINK_50K,
-    fastPass: process.env.REACT_APP_STRIPE_LINK_50K_FAST
+    standard: process.env.REACT_APP_STRIPE_LINK_50K
   },
   100000: {
-    standard: process.env.REACT_APP_STRIPE_LINK_100K,
-    fastPass: process.env.REACT_APP_STRIPE_LINK_100K_FAST
+    standard: process.env.REACT_APP_STRIPE_LINK_100K
   },
   200000: {
-    standard: process.env.REACT_APP_STRIPE_LINK_200K,
-    fastPass: process.env.REACT_APP_STRIPE_LINK_200K_FAST
+    standard: process.env.REACT_APP_STRIPE_LINK_200K
   }
 };
 
@@ -18,37 +21,37 @@ export const testPaymentFlows = async () => {
   console.group('🧪 Starting Payment Flow Tests');
   
   const testCases = [
-    { balance: 50000, paymentMethod: 'card', fastPass: false },
-    { balance: 50000, paymentMethod: 'card', fastPass: true },
-    { balance: 100000, paymentMethod: 'card', fastPass: false },
-    { balance: 100000, paymentMethod: 'card', fastPass: true },
-    { balance: 200000, paymentMethod: 'card', fastPass: false },
-    { balance: 200000, paymentMethod: 'card', fastPass: true },
-    { balance: 50000, paymentMethod: 'crypto', fastPass: false },
-    { balance: 50000, paymentMethod: 'crypto', fastPass: true },
-    { balance: 100000, paymentMethod: 'crypto', fastPass: false },
-    { balance: 100000, paymentMethod: 'crypto', fastPass: true },
-    { balance: 200000, paymentMethod: 'crypto', fastPass: false },
-    { balance: 200000, paymentMethod: 'crypto', fastPass: true }
+    { balance: 10000, paymentMethod: 'card' },
+    { balance: 25000, paymentMethod: 'card' },
+    { balance: 50000, paymentMethod: 'card' },
+    { balance: 100000, paymentMethod: 'card' },
+    { balance: 200000, paymentMethod: 'card' },
+    { balance: 10000, paymentMethod: 'crypto' },
+    { balance: 25000, paymentMethod: 'crypto' },
+    { balance: 50000, paymentMethod: 'crypto' },
+    { balance: 100000, paymentMethod: 'crypto' },
+    { balance: 200000, paymentMethod: 'crypto' }
   ];
 
   for (const testCase of testCases) {
-    console.group(`Testing ${testCase.paymentMethod.toUpperCase()} payment for $${testCase.balance} ${testCase.fastPass ? 'with' : 'without'} Fast Pass`);
+    console.group(`Testing ${testCase.paymentMethod.toUpperCase()} payment for $${testCase.balance}`);
     
     try {
       // Test price calculation
-      const basePrice = testCase.balance === 50000 ? 400 : 
-                       testCase.balance === 100000 ? 600 : 999;
+      const basePrice = testCase.balance === 10000 ? 99 : 
+                       testCase.balance === 25000 ? 249 : 
+                       testCase.balance === 50000 ? 399 : 
+                       testCase.balance === 100000 ? 599 : 1199;
       
       const expectedAmount = (testCase.paymentMethod === 'crypto' 
-        ? basePrice * (testCase.fastPass ? 2 : 1) * 0.75  // 25% crypto discount
-        : basePrice * (testCase.fastPass ? 2 : 1));
+        ? basePrice * 0.75  // 25% crypto discount
+        : basePrice);
       
       console.log('💰 Expected amount:', expectedAmount);
 
       // For card payments, verify Stripe link
       if (testCase.paymentMethod === 'card') {
-        const stripeLink = STRIPE_LINKS[testCase.balance][testCase.fastPass ? 'fastPass' : 'standard'];
+        const stripeLink = STRIPE_LINKS[testCase.balance].standard;
         if (!stripeLink) {
           throw new Error('Stripe link not found');
         }
@@ -89,24 +92,25 @@ export const testPaymentFlows = async () => {
 };
 
 // Function to test a single payment flow
-export const testSinglePaymentFlow = async (balance, paymentMethod, fastPass = false) => {
+export const testSinglePaymentFlow = async (balance, paymentMethod) => {
   console.group(`🧪 Testing Single Payment Flow`);
   console.log(`Balance: $${balance}`);
   console.log(`Payment Method: ${paymentMethod}`);
-  console.log(`Fast Pass: ${fastPass}`);
 
   try {
-    const basePrice = balance === 50000 ? 400 : 
-                     balance === 100000 ? 600 : 999;
+    const basePrice = balance === 10000 ? 99 : 
+                     balance === 25000 ? 249 : 
+                     balance === 50000 ? 399 : 
+                     balance === 100000 ? 599 : 1199;
     
     const expectedAmount = (paymentMethod === 'crypto' 
-      ? basePrice * (fastPass ? 2 : 1) * 0.75  // 25% crypto discount
-      : basePrice * (fastPass ? 2 : 1));
+      ? basePrice * 0.75  // 25% crypto discount
+      : basePrice);
     
     console.log('💰 Expected amount:', expectedAmount);
 
     if (paymentMethod === 'card') {
-      const stripeLink = STRIPE_LINKS[balance][fastPass ? 'fastPass' : 'standard'];
+      const stripeLink = STRIPE_LINKS[balance].standard;
       if (!stripeLink) {
         throw new Error('Stripe link not found');
       }

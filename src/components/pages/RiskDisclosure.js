@@ -98,7 +98,7 @@ const RiskDisclosure = () => {
       <Section>
         <SectionTitle>Contact Us</SectionTitle>
         <Text>
-          If you have questions about this Risk Disclosure, please contact us at support@ascendantcapital.ca
+          If you have questions about this Risk Disclosure, please contact us at support@acitrading.ca
         </Text>
       </Section>
     </Container>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import Button from './Button';
 
 const Particles = styled.div`
@@ -168,16 +169,54 @@ const Auth = () => {
 
     try {
       if (isSignIn) {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        
+        // Update lastActive timestamp on sign in
+        try {
+          const userDocRef = doc(db, 'users', userCredential.user.uid);
+          await setDoc(userDocRef, {
+            lastActive: new Date()
+          }, { merge: true });
+        } catch (firestoreError) {
+          // If user document doesn't exist in Firestore yet, create it
+          await setDoc(doc(db, 'users', userCredential.user.uid), {
+            email: email,
+            firstName: '',
+            lastName: '',
+            phone: '',
+            createdAt: new Date(),
+            lastActive: new Date(),
+            role: 'user'
+          });
+        }
       } else {
         const name = e.target.name.value;
         const phone = e.target.phone.value;
-        await createUserWithEmailAndPassword(auth, email, password);
-        // Here you would typically store additional user data in Firestore
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Store user data in Firestore
+        const nameParts = name.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+        
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          createdAt: new Date(),
+          lastActive: new Date(),
+          role: 'user'
+        });
       }
       navigate('/dashboard');
     } catch (err) {
-      setError(err.message);
+      // Display generic error messages instead of Firebase errors
+      if (isSignIn) {
+        setError('Email or password incorrect');
+      } else {
+        setError('Unable to create account. Please try again.');
+      }
     }
   };
 

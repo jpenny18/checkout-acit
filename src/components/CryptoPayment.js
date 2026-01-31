@@ -181,22 +181,6 @@ const PriceInfo = styled.div`
   color: #999;
 `;
 
-const RefreshButton = styled.button`
-  background: transparent;
-  border: none;
-  color: #ffc62d;
-  cursor: pointer;
-  padding: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0 auto;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const PaymentStatus = styled.div`
   text-align: center;
   padding: 1rem;
@@ -236,6 +220,10 @@ const TestButton = styled.button`
 `;
 
 const cryptoAddresses = {
+  USDT: {
+    address: 'TLVMLJhSmWTTtitpeF5Gvv2j4avXVZ3EMd',
+    name: 'USDT (TRC20)'
+  },
   BTC: {
     address: 'bc1q4zs3mwhv50vgfp05pawdp0s2w8qfd0h824464u',
     name: 'Bitcoin'
@@ -243,10 +231,6 @@ const cryptoAddresses = {
   ETH: {
     address: '0x54634008a757D262f0fD05213595dEE77a82026B',
     name: 'Ethereum'
-  },
-  USDT: {
-    address: 'TLVMLJhSmWTTtitpeF5Gvv2j4avXVZ3EMd',
-    name: 'USDT (TRC20)'
   }
 };
 
@@ -256,7 +240,6 @@ function CryptoPayment({ amount, onBack, orderId }) {
   const [error, setError] = useState(null);
   const [copiedAddress, setCopiedAddress] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('pending');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [selectedCrypto, setSelectedCrypto] = useState('');
   const [cryptoAmount, setCryptoAmount] = useState('');
   const [isInitializing, setIsInitializing] = useState(true);
@@ -321,11 +304,10 @@ function CryptoPayment({ amount, onBack, orderId }) {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 30000);
+    // Fetch prices only once on component mount - removed 30s interval
 
     // Cleanup function
     return () => {
-      clearInterval(interval);
       if (orderId) {
         cryptoPaymentService.stopPaymentListener(orderId);
       }
@@ -336,10 +318,6 @@ function CryptoPayment({ amount, onBack, orderId }) {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(''), 2000);
-  };
-
-  const handleRefreshPrices = () => {
-    setRefreshKey(prev => prev + 1);
   };
 
   useEffect(() => {
@@ -428,9 +406,6 @@ function CryptoPayment({ amount, onBack, orderId }) {
       {error && (
         <PaymentStatus status="error">
           {error}
-          <RefreshButton onClick={handleRefreshPrices}>
-            Try Again
-          </RefreshButton>
         </PaymentStatus>
       )}
 
@@ -442,10 +417,7 @@ function CryptoPayment({ amount, onBack, orderId }) {
       ) : (
         <>
           <PriceInfo>
-            Live Prices (updates every 30s):
-            <RefreshButton onClick={handleRefreshPrices}>
-              Refresh Prices
-            </RefreshButton>
+            Current Crypto Prices:
           </PriceInfo>
 
           <CryptoOptionsGrid>

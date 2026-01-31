@@ -1,32 +1,27 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
-import StripeCardElement from './StripeCardElement';
+import WhopCheckoutButton from './WhopCheckoutButton';
 import CryptoPayment from '../CryptoPayment';
 
-// Initialize Stripe with your publishable key
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
-
-const AccordionContainer = styled.div`
+const PaymentContainer = styled.div`
   margin-bottom: 2rem;
 `;
 
-const AccordionSection = styled.div`
+const PaymentSection = styled.div`
   border: 1px solid #333;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  border-radius: 8px;
   background-color: #2a2a2a;
   overflow: hidden;
+  margin-bottom: 1rem;
 `;
 
-const AccordionHeader = styled.div`
+const PaymentHeader = styled.div`
   display: flex;
   align-items: center;
   padding: 1rem;
+  gap: 1rem;
   cursor: pointer;
   transition: background-color 0.3s;
-  gap: 1rem;
   
   &:hover {
     background-color: rgba(255, 255, 255, 0.05);
@@ -65,10 +60,11 @@ const PaymentMethod = styled.div`
   color: ${props => props.active ? '#ffc62d' : 'white'};
 `;
 
-const AccordionBody = styled.div`
-  max-height: ${props => props.active ? '400px' : '0'};
+const PaymentBody = styled.div`
+  max-height: ${props => props.active ? '600px' : '0'};
   overflow-y: ${props => props.active ? 'auto' : 'hidden'};
   transition: max-height 0.3s ease-in-out;
+  padding: ${props => props.active ? '1.5rem' : '0 1.5rem'};
   
   /* Webkit scrollbar styling */
   &::-webkit-scrollbar {
@@ -90,48 +86,31 @@ const AccordionBody = styled.div`
   scrollbar-color: #333 transparent;
 `;
 
-const AccordionContent = styled.div`
-  padding: ${props => props.active ? '1.5rem' : '0 1.5rem'};
-  transition: padding 0.3s;
-  min-height: ${props => props.isCrypto ? '400px' : 'auto'};
-`;
-
-const DiscountBadge = styled.span`
-  background: rgba(255, 198, 45, 0.2);
-  color: #ffc62d;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  margin-left: auto;
-`;
-
 const PaymentAccordion = ({ 
   customerInfo, 
   selectedBalance, 
   onSubscriptionComplete, 
   orderId,
-  subscriptionPrices 
+  subscriptionPrices,
+  discountedAmount,
+  originalAmount,
+  discountCode
 }) => {
   const [activeMethod, setActiveMethod] = useState('card');
   const [loading, setLoading] = useState(false);
 
-  // Get the appropriate price for the selected balance
-  const getMonthlyPrice = () => {
-    return selectedBalance === 50000 ? 99 :
-           selectedBalance === 100000 ? 149 : 249;
-  };
-
-  // Get the appropriate Stripe price ID for the selected balance
-  const getPriceId = () => {
-    return selectedBalance === 50000 ? process.env.REACT_APP_STRIPE_PRICE_ID_50K :
-           selectedBalance === 100000 ? process.env.REACT_APP_STRIPE_PRICE_ID_100K :
-           process.env.REACT_APP_STRIPE_PRICE_ID_200K;
+  // Get the appropriate one-time price for the selected balance
+  const getOneTimePrice = () => {
+    return discountedAmount || (selectedBalance === 10000 ? 99 :
+           selectedBalance === 25000 ? 249 :
+           selectedBalance === 50000 ? 399 :
+           selectedBalance === 100000 ? 599 : 1199);
   };
 
   return (
-    <AccordionContainer>
-      <AccordionSection>
-        <AccordionHeader 
+    <PaymentContainer>
+      <PaymentSection>
+        <PaymentHeader 
           active={activeMethod === 'card'}
           onClick={() => setActiveMethod('card')}
         >
@@ -139,26 +118,18 @@ const PaymentAccordion = ({
           <PaymentMethod active={activeMethod === 'card'}>
             💳 Credit/Debit Card
           </PaymentMethod>
-        </AccordionHeader>
-        <AccordionBody active={activeMethod === 'card'}>
-          <AccordionContent active={activeMethod === 'card'}>
-            <Elements stripe={stripePromise}>
-              <StripeCardElement 
-                customerInfo={customerInfo}
-                selectedBalance={selectedBalance}
-                priceId={getPriceId()}
-                amount={getMonthlyPrice()}
-                onSubscriptionComplete={onSubscriptionComplete}
-                loading={loading}
-                setLoading={setLoading}
-              />
-            </Elements>
-          </AccordionContent>
-        </AccordionBody>
-      </AccordionSection>
+        </PaymentHeader>
+        <PaymentBody active={activeMethod === 'card'}>
+          <WhopCheckoutButton 
+            selectedBalance={selectedBalance}
+            amount={getOneTimePrice()}
+            discountCode={discountCode}
+          />
+        </PaymentBody>
+      </PaymentSection>
 
-      <AccordionSection>
-        <AccordionHeader 
+      <PaymentSection>
+        <PaymentHeader 
           active={activeMethod === 'crypto'}
           onClick={() => setActiveMethod('crypto')}
         >
@@ -166,20 +137,16 @@ const PaymentAccordion = ({
           <PaymentMethod active={activeMethod === 'crypto'}>
             ₿ Crypto Payment
           </PaymentMethod>
-        </AccordionHeader>
-        <AccordionBody active={activeMethod === 'crypto'}>
-          <AccordionContent active={activeMethod === 'crypto'} isCrypto={true}>
-            {activeMethod === 'crypto' && (
-              <CryptoPayment 
-                amount={getMonthlyPrice()} 
-                onBack={() => {}} 
-                orderId={orderId}
-              />
-            )}
-          </AccordionContent>
-        </AccordionBody>
-      </AccordionSection>
-    </AccordionContainer>
+        </PaymentHeader>
+        <PaymentBody active={activeMethod === 'crypto'}>
+          <CryptoPayment 
+            amount={getOneTimePrice()} 
+            onBack={() => {}} 
+            orderId={orderId}
+          />
+        </PaymentBody>
+      </PaymentSection>
+    </PaymentContainer>
   );
 };
 

@@ -83,8 +83,8 @@ const Footer = () => {
         
         <FooterSection>
           <FooterTitle>Contact</FooterTitle>
-          <ExternalLink href="mailto:support@ascendantcapital.ca">
-            support@ascendantcapital.ca
+          <ExternalLink href="mailto:support@acitrading.ca">
+            support@acitrading.ca
           </ExternalLink>
           <SocialLinks>
             <ExternalLink href="https://twitter.com/acitradingchallenge" target="_blank" rel="noopener noreferrer">

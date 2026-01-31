@@ -122,7 +122,7 @@ const TermsOfService = () => {
       <Section>
         <SectionTitle>Contact Us</SectionTitle>
         <Text>
-          If you have questions about these Terms of Service, please contact us at support@ascendantcapital.ca
+          If you have questions about these Terms of Service, please contact us at support@acitrading.ca
         </Text>
       </Section>
     </Container>

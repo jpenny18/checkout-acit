@@ -211,6 +211,116 @@ const HeroContent = styled.div`
   }
 `;
 
+const ShootingStarsContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+`;
+
+const ShootingStar = styled.div`
+  position: absolute;
+  top: ${props => props.top}%;
+  right: ${props => props.right}%;
+  width: 3px;
+  height: 3px;
+  background: #ffc62d;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ffc62d, 0 0 20px #ffc62d, 0 0 30px rgba(255,198,45,0.5);
+  opacity: 0;
+  animation: shootingStar ${props => props.duration}s linear ${props => props.delay}s infinite;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(135deg, #ffc62d, transparent);
+    transform-origin: left center;
+    transform: translate(-50%, -50%) rotate(-40deg);
+  }
+  
+  @keyframes shootingStar {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(-600px, 600px) scale(0);
+      opacity: 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    width: 2px;
+    height: 2px;
+    
+    &::before {
+      width: 50px;
+      height: 1.5px;
+    }
+    
+    @keyframes shootingStar {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0;
+      }
+      5% {
+        opacity: 1;
+      }
+      70% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-600px, 600px) scale(0);
+        opacity: 0;
+      }
+    }
+  }
+`;
+
+const SplatParticle = styled.div`
+  position: absolute;
+  top: ${props => props.splatTop}%;
+  right: ${props => props.splatRight}%;
+  width: 8px;
+  height: 8px;
+  background: #ffc62d;
+  border-radius: 50%;
+  opacity: 0;
+  animation: splatParticle ${props => props.duration}s ease-out ${props => props.delay + props.duration * 0.7}s infinite;
+  
+  @keyframes splatParticle {
+    0% {
+      transform: translate(0, 0) scale(0);
+      opacity: 0;
+    }
+    2% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate(${props => props.particleX}px, ${props => props.particleY}px) scale(0.2);
+      opacity: 0;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    width: 5px;
+    height: 5px;
+  }
+`;
+
 const HeroSection = styled.section`
   min-height: 100vh;
   background: linear-gradient(135deg, #151515 0%, #1a1a1a 100%);
@@ -659,23 +769,29 @@ const BalanceSection = styled.div`
 `;
 
 const BalanceButton = styled.button`
-  padding: 1rem 2rem;
+  padding: 1rem 1.5rem;
   border: 2px solid ${props => props.selected ? '#ffc62d' : '#333'};
   background: ${props => props.selected ? '#ffc62d' : 'transparent'};
   color: ${props => props.selected ? '#000' : '#fff'};
   cursor: pointer;
   border-radius: 4px;
   flex: 1;
-  min-width: 200px;
-  font-size: 1.1rem;
+  min-width: 150px;
+  max-width: 180px;
+  font-size: 1rem;
   white-space: nowrap;
   
   @media (max-width: 768px) {
     min-width: unset;
-    flex: 0 1 calc(33.33% - 0.5rem);
-    padding: 1rem;
-    font-size: 0.9rem;
+    max-width: unset;
+    flex: 1 1 calc(50% - 0.5rem);
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
     border-width: 2px;
+    
+    &:nth-child(5) {
+      flex: 1 1 100%;
+    }
   }
 `;
 
@@ -1353,12 +1469,12 @@ const PopupContent = styled.div`
   border-radius: 16px;
   padding: 2.5rem;
   position: relative;
-  max-width: 500px;
+  max-width: 520px;
   width: 90%;
-  border: 1px solid rgba(255, 198, 45, 0.3);
+  border: 1px solid #555;
   box-shadow: 
-    0 0 50px rgba(255, 198, 45, 0.1),
-    inset 0 0 20px rgba(255, 198, 45, 0.05);
+    0 0 50px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.02);
   animation: popupFloat 0.5s ease-out;
   
   @keyframes popupFloat {
@@ -1384,7 +1500,7 @@ const PopupCloseButton = styled.button`
   right: 1rem;
   background: none;
   border: none;
-  color: #ffc62d;
+  color: #999;
   font-size: 1.5rem;
   cursor: pointer;
   width: 32px;
@@ -1396,13 +1512,14 @@ const PopupCloseButton = styled.button`
   transition: all 0.2s ease;
   
   &:hover {
-    background: rgba(255, 198, 45, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ccc;
     transform: rotate(90deg);
   }
 `;
 
 const PopupTitle = styled.h2`
-  color: #ffc62d;
+  color: #ccc;
   font-size: 2rem;
   margin-bottom: 1rem;
   text-align: center;
@@ -1425,15 +1542,15 @@ const PopupDescription = styled.p`
 `;
 
 const DiscountCode = styled.div`
-  background: rgba(255, 198, 45, 0.1);
-  border: 2px dashed #ffc62d;
+  background: rgba(50, 50, 50, 0.4);
+  border: 2px dashed #666;
   padding: 1rem;
   border-radius: 8px;
   text-align: center;
   margin: 1.5rem 0;
   
   span {
-    color: #ffc62d;
+    color: #ccc;
     font-size: 1.8rem;
     font-weight: bold;
     letter-spacing: 2px;
@@ -1441,6 +1558,61 @@ const DiscountCode = styled.div`
     @media (max-width: 768px) {
       font-size: 1.4rem;
     }
+  }
+`;
+
+const PopupHighlights = styled.div`
+  background: rgba(50, 50, 50, 0.4);
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+`;
+
+const HighlightTitle = styled.h3`
+  color: #ccc;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+`;
+
+const HighlightItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: white;
+  font-size: 1rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    gap: 0.5rem;
+  }
+`;
+
+const HighlightIcon = styled.span`
+  color: #ffc62d;
+  font-size: 1.25rem;
+  min-width: 24px;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+    min-width: 20px;
   }
 `;
 
@@ -1668,12 +1840,14 @@ const LandingPage = () => {
   const [expandedReviews, setExpandedReviews] = useState({});
 
   const calculateValues = (balance) => ({
-    maxDailyLoss: balance * 0.06,
-    maxLoss: balance * 0.12,
+    maxDailyLoss: balance * 0.10,
+    maxLoss: balance * 0.15,
     profitTargetStep1: balance * 0.10,
     profitTargetStep2: balance * 0.05,
-    refundableFee: balance === 50000 ? 400 : balance === 100000 ? 600 : 999,
-    monthlyPrice: balance === 50000 ? 99 : balance === 100000 ? 149 : 249
+    oneTimePrice: balance === 10000 ? 99 : 
+                  balance === 25000 ? 249 : 
+                  balance === 50000 ? 399 : 
+                  balance === 100000 ? 599 : 1199
   });
 
   const values = calculateValues(selectedBalance);
@@ -1689,6 +1863,15 @@ const LandingPage = () => {
     checkScroll();
     window.addEventListener('resize', checkScroll);
     return () => window.removeEventListener('resize', checkScroll);
+  }, []);
+
+  // Show popup after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowPopup(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const scrollToReviews = () => {
@@ -1789,13 +1972,30 @@ const LandingPage = () => {
       <PopupOverlay isVisible={showPopup}>
         <PopupContent>
           <PopupCloseButton onClick={() => setShowPopup(false)}>×</PopupCloseButton>
-          <PopupTitle>Special Offer! 🎉</PopupTitle>
+          <PopupTitle>Valentine's Day Sale</PopupTitle>
           <PopupDescription>
-            For a limited time, get an exclusive 35% discount on all trading challenges! Don't miss this opportunity to start your journey to becoming a funded trader.
+            Limited time offer: Get 40% off all trading challenges with the highest drawdown limits in the industry.
           </PopupDescription>
+          
+          <PopupHighlights>
+            <HighlightTitle>Industry-Leading Terms</HighlightTitle>
+            <HighlightItem>
+              <HighlightIcon>✓</HighlightIcon>
+              <span><strong>15% Maximum Drawdown</strong> - Highest in the industry</span>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightIcon>✓</HighlightIcon>
+              <span><strong>10% Daily Drawdown</strong> - More trading flexibility</span>
+            </HighlightItem>
+            <HighlightItem>
+              <HighlightIcon>✓</HighlightIcon>
+              <span><strong>1:200 Leverage</strong> - Maximize your potential</span>
+            </HighlightItem>
+          </PopupHighlights>
+
           <DiscountCode>
             <p style={{ color: '#999', marginBottom: '0.5rem' }}>Use Code</p>
-            <span>35OFF</span>
+            <span>VDAY40</span>
           </DiscountCode>
           <PopupButton to="/auth?mode=signup" onClick={() => setShowPopup(false)}>
             CLAIM YOUR DISCOUNT NOW
@@ -1827,6 +2027,37 @@ const LandingPage = () => {
             <Particle key={i} />
           ))}
         </Particles>
+
+        {/* Shooting Stars Effect */}
+        <ShootingStarsContainer>
+          {/* Shooting Star 1 */}
+          <ShootingStar top={5} right={0} duration={2} delay={0} />
+          <SplatParticle splatTop={35} splatRight={30} duration={2} delay={0} particleX={-30} particleY={20} />
+          <SplatParticle splatTop={35} splatRight={30} duration={2} delay={0} particleX={20} particleY={30} />
+          <SplatParticle splatTop={35} splatRight={30} duration={2} delay={0} particleX={10} particleY={-20} />
+          <SplatParticle splatTop={35} splatRight={30} duration={2} delay={0} particleX={-15} particleY={-15} />
+          
+          {/* Shooting Star 2 */}
+          <ShootingStar top={15} right={5} duration={2.5} delay={1.5} />
+          <SplatParticle splatTop={48} splatRight={35} duration={2.5} delay={1.5} particleX={-25} particleY={25} />
+          <SplatParticle splatTop={48} splatRight={35} duration={2.5} delay={1.5} particleX={25} particleY={20} />
+          <SplatParticle splatTop={48} splatRight={35} duration={2.5} delay={1.5} particleX={15} particleY={-25} />
+          <SplatParticle splatTop={48} splatRight={35} duration={2.5} delay={1.5} particleX={-20} particleY={-10} />
+          
+          {/* Shooting Star 3 */}
+          <ShootingStar top={8} right={10} duration={2.2} delay={3} />
+          <SplatParticle splatTop={38} splatRight={40} duration={2.2} delay={3} particleX={-28} particleY={22} />
+          <SplatParticle splatTop={38} splatRight={40} duration={2.2} delay={3} particleX={22} particleY={28} />
+          <SplatParticle splatTop={38} splatRight={40} duration={2.2} delay={3} particleX={12} particleY={-22} />
+          <SplatParticle splatTop={38} splatRight={40} duration={2.2} delay={3} particleX={-18} particleY={-12} />
+          
+          {/* Shooting Star 4 */}
+          <ShootingStar top={20} right={2} duration={2.3} delay={4.5} />
+          <SplatParticle splatTop={52} splatRight={32} duration={2.3} delay={4.5} particleX={-26} particleY={24} />
+          <SplatParticle splatTop={52} splatRight={32} duration={2.3} delay={4.5} particleX={24} particleY={26} />
+          <SplatParticle splatTop={52} splatRight={32} duration={2.3} delay={4.5} particleX={14} particleY={-24} />
+          <SplatParticle splatTop={52} splatRight={32} duration={2.3} delay={4.5} particleX={-16} particleY={-14} />
+        </ShootingStarsContainer>
 
         {/* Desktop Layout */}
         <HeroContainer>
@@ -1961,7 +2192,7 @@ const LandingPage = () => {
         <div style={{transform: 'scale(0.85)', transformOrigin: 'top center'}}>
           <SectionTitle>Choose Your Account Size</SectionTitle>
           <BalanceSection>
-            {[50000, 100000, 200000].map(balance => (
+            {[10000, 25000, 50000, 100000, 200000].map(balance => (
               <BalanceButton
                 key={balance}
                 selected={balance === selectedBalance}
@@ -1996,16 +2227,16 @@ const LandingPage = () => {
 
             <TableRow>
               <div>Maximum Daily Loss</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
             </TableRow>
 
             <TableRow>
               <div>Maximum Loss</div>
-              <div>${values.maxLoss.toLocaleString()} (12%)</div>
-              <div>${values.maxLoss.toLocaleString()} (12%)</div>
-              <div>${values.maxLoss.toLocaleString()} (12%)</div>
+              <div>${values.maxLoss.toLocaleString()} (15%)</div>
+              <div>${values.maxLoss.toLocaleString()} (15%)</div>
+              <div>${values.maxLoss.toLocaleString()} (15%)</div>
             </TableRow>
 
             <TableRow>
@@ -2023,38 +2254,17 @@ const LandingPage = () => {
             </TableRow>
 
             <TableRow>
-              <div>Monthly Price</div>
-              <HighlightedCell>${values.monthlyPrice}/month</HighlightedCell>
+              <div>One-Time Price</div>
+              <HighlightedCell>${values.oneTimePrice}</HighlightedCell>
               <div>-</div>
-              <div>${values.monthlyPrice}/month</div>
+              <div>-</div>
             </TableRow>
 
              <TableRow>
-              <div style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
-                Risk Desk Setup Fee
-                <div 
-                  style={{
-                    cursor: 'help',
-                    fontSize: '14px',
-                    color: '#666',
-                    border: '1px solid #ccc',
-                    borderRadius: '50%',
-                    width: '16px',
-                    height: '16px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                  title="This is a one-time activation fee charged when you pass the challenge to activate your funded account"
-                >
-                  i
-                </div>
-              </div>
-              <div>X</div>
-              <div>X</div>
-              <HighlightedCell>
-                ${selectedBalance === 50000 ? '150' : selectedBalance === 100000 ? '200' : '300'}
-              </HighlightedCell>
+              <div>Refund</div>
+              <div>-</div>
+              <div>-</div>
+              <HighlightedCell>Yes 100%</HighlightedCell>
             </TableRow>
           </Table>
 
@@ -2314,8 +2524,8 @@ const LandingPage = () => {
           
           <FooterSection>
             <FooterTitle>Contact</FooterTitle>
-            <ExternalLink href="mailto:support@ascendantcapital.ca">
-              support@ascendantcapital.ca
+            <ExternalLink href="mailto:support@acitrading.ca">
+              support@acitrading.ca
             </ExternalLink>
           </FooterSection>
         </FooterContent>

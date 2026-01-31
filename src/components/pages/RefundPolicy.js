@@ -70,7 +70,7 @@ const RefundPolicy = () => {
       <Section>
         <SectionTitle>Acceptance of this Policy</SectionTitle>
         <Text>
-          By placing an order with ACI Trading LTD, you acknowledge that you have read, understood, and agreed to this Refund Policy as well as our Evaluation Terms and Conditions. These terms are an integral part of your agreement with us for the purchase of ACI Trading Evaluations. If you do not agree with these terms, you should not place an order. Should you have any questions about our refund policy, please contact us at support@ascendantcapital.ca.
+          By placing an order with ACI Trading LTD, you acknowledge that you have read, understood, and agreed to this Refund Policy as well as our Evaluation Terms and Conditions. These terms are an integral part of your agreement with us for the purchase of ACI Trading Evaluations. If you do not agree with these terms, you should not place an order. Should you have any questions about our refund policy, please contact us at support@acitrading.ca.
         </Text>
       </Section>
 

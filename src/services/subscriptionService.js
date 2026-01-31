@@ -78,6 +78,10 @@ const subscriptionService = {
   // Get price ID based on account size
   getPriceId: (accountSize) => {
     switch(accountSize) {
+      case 10000:
+        return process.env.REACT_APP_STRIPE_PRICE_ID_10K;
+      case 25000:
+        return process.env.REACT_APP_STRIPE_PRICE_ID_25K;
       case 50000:
         return process.env.REACT_APP_STRIPE_PRICE_ID_50K;
       case 100000:
@@ -89,17 +93,21 @@ const subscriptionService = {
     }
   },
   
-  // Get monthly price based on account size
-  getMonthlyPrice: (accountSize) => {
+  // Get one-time price based on account size
+  getOneTimePrice: (accountSize) => {
     switch(accountSize) {
-      case 50000:
+      case 10000:
         return 99;
-      case 100000:
-        return 149;
-      case 200000:
+      case 25000:
         return 249;
+      case 50000:
+        return 399;
+      case 100000:
+        return 599;
+      case 200000:
+        return 1199;
       default:
-        throw new Error(`No monthly price found for account size: ${accountSize}`);
+        throw new Error(`No one-time price found for account size: ${accountSize}`);
     }
   }
 };

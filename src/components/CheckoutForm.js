@@ -91,6 +91,60 @@ const AccountPrice = styled.div`
   color: white;
 `;
 
+const DiscountPrice = styled.div`
+  font-size: 1.5rem;
+  color: #ccc;
+  font-weight: bold;
+  margin-top: 0.5rem;
+`;
+
+const OriginalPrice = styled.span`
+  text-decoration: line-through;
+  color: #666;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+`;
+
+const DiscountSection = styled.div`
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(50, 50, 50, 0.3);
+  border: 1px solid #444;
+  border-radius: 8px;
+`;
+
+const DiscountHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+`;
+
+const DiscountBadge = styled.div`
+  background: #555;
+  color: #ccc;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+`;
+
+const DiscountDetails = styled.div`
+  color: #999;
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  strong {
+    color: #ccc;
+  }
+`;
+
 const PlatformSection = styled.div`
   margin: 2rem 0;
 `;
@@ -226,6 +280,8 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
   const [currentOrderId, setCurrentOrderId] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
+  const [discountCode] = useState('VDAY40');
+  const [discountPercentage] = useState(40);
 
   // Initialize our simulated API handler
   useEffect(() => {
@@ -241,10 +297,19 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Get monthly price based on account size
-  const getMonthlyPrice = () => {
-    return selectedBalance === 50000 ? 99 :
-           selectedBalance === 100000 ? 149 : 249;
+  // Get one-time price based on account size
+  const getOneTimePrice = () => {
+    return selectedBalance === 10000 ? 99 :
+           selectedBalance === 25000 ? 249 :
+           selectedBalance === 50000 ? 399 :
+           selectedBalance === 100000 ? 599 : 1199;
+  };
+
+  // Calculate discounted price
+  const getDiscountedPrice = () => {
+    const basePrice = getOneTimePrice();
+    const discount = basePrice * (discountPercentage / 100);
+    return Math.round(basePrice - discount);
   };
 
   const handleInputChange = (e) => {
@@ -277,12 +342,14 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
       },
       orderDetails: {
         accountSize: selectedBalance,
-        basePrice: getMonthlyPrice(),
-        finalAmount: getMonthlyPrice(),
+        basePrice: getOneTimePrice(),
+        discountCode: discountCode,
+        discountPercentage: discountPercentage,
+        finalAmount: getDiscountedPrice(),
         platform: selectedPlatform,
         paymentMethod: null, // Will be set during payment
-        isSubscription: true,
-        subscriptionInterval: 'month'
+        isSubscription: false,
+        subscriptionInterval: null
       },
       status: 'pending',
       paymentDetails: null
@@ -331,20 +398,26 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
       <FormContainer>
         <BackButton onClick={() => setShowPaymentMethods(false)}>← Back to Information</BackButton>
         
-        <AccountCard>
-          <AccountSize>${selectedBalance.toLocaleString()}</AccountSize>
-          <AccountPrice>Monthly Price: ${getMonthlyPrice()}/month</AccountPrice>
-        </AccountCard>
-        
-        <FormTitle>Choose Payment Method</FormTitle>
-        
-        <PaymentAccordion 
-          customerInfo={formData}
-          selectedBalance={selectedBalance}
-          onSubscriptionComplete={handleSubscriptionComplete}
-          cryptoDiscountPercentage={getCachedCryptoDiscountPercentage()}
-      orderId={currentOrderId}
-        />
+      <AccountCard>
+        <AccountSize>${selectedBalance.toLocaleString()}</AccountSize>
+        <AccountPrice>
+          <OriginalPrice>${getOneTimePrice()}</OriginalPrice>
+          <DiscountPrice>${getDiscountedPrice()}</DiscountPrice>
+        </AccountPrice>
+      </AccountCard>
+      
+      <FormTitle>Choose Payment Method</FormTitle>
+      
+      <PaymentAccordion 
+        customerInfo={formData}
+        selectedBalance={selectedBalance}
+        onSubscriptionComplete={handleSubscriptionComplete}
+        cryptoDiscountPercentage={getCachedCryptoDiscountPercentage()}
+        orderId={currentOrderId}
+        discountedAmount={getDiscountedPrice()}
+        originalAmount={getOneTimePrice()}
+        discountCode={discountCode}
+      />
       </FormContainer>
     );
   }
@@ -355,13 +428,11 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
       
       <AccountCard>
         <AccountSize>${selectedBalance.toLocaleString()}</AccountSize>
-        <AccountPrice>Monthly Price: ${getMonthlyPrice()}/month</AccountPrice>
+        <AccountPrice>
+          <OriginalPrice>${getOneTimePrice()}</OriginalPrice>
+        </AccountPrice>
+        <DiscountPrice>Sale Price: ${getDiscountedPrice()}</DiscountPrice>
       </AccountCard>
-
-      <SubscriptionNote>
-        <span>Subscription:</span> You are signing up for a monthly subscription. You can cancel anytime.
-        Your card will be charged ${getMonthlyPrice()} per month until you cancel. Cancelling your subscription will immediately forfeit your account.
-      </SubscriptionNote>
 
       <FormSection>
         <FormTitle>Contact Information</FormTitle>
@@ -433,6 +504,18 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
         </PlatformButtons>
       </FormSection>
 
+      <DiscountSection>
+        <DiscountHeader>
+          <FormTitle style={{ margin: 0 }}>Valentine's Day Sale</FormTitle>
+          <DiscountBadge>{discountPercentage}% OFF</DiscountBadge>
+        </DiscountHeader>
+        <DiscountDetails>
+          <strong>Code: {discountCode}</strong> - Automatically applied<br/>
+          You save ${getOneTimePrice() - getDiscountedPrice()} on your purchase.
+        </DiscountDetails>
+      </DiscountSection>
+
+
       <TermsCheckbox>
         <input
           type="checkbox"
@@ -441,7 +524,7 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
           onChange={(e) => setTermsAccepted(e.target.checked)}
         />
         <label htmlFor="terms">
-          I have read and agree to the <a href="https://www.ascendantcapital.ca/disclaimer" target="_blank" rel="noopener noreferrer">Terms & Conditions</a> and <a href="https://www.ascendantcapital.ca/refundpolicy" target="_blank" rel="noopener noreferrer">Refund/Dispute Policy</a>. I understand that I am signing up for a monthly subscription that will be automatically renewed until I cancel.
+          I have read and agree to the <a href="https://www.acitrading.ca/disclaimer" target="_blank" rel="noopener noreferrer">Terms & Conditions</a> and <a href="https://www.acitrading.ca/refundpolicy" target="_blank" rel="noopener noreferrer">Refund/Dispute Policy</a>. I understand that this is a one-time payment for access to my challenge account.
         </label>
       </TermsCheckbox>
 
@@ -451,6 +534,12 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
       >
         Continue to payment
       </ContinueButton>
+
+      <SubscriptionNote>
+        <span>One-Time Payment:</span> This is a one-time payment for access to your challenge account.
+        You will be charged ${getDiscountedPrice()} once (discount included). No recurring charges.
+      </SubscriptionNote>
+      
     </FormContainer>
   );
 }

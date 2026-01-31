@@ -63,7 +63,7 @@ const BalanceSection = styled.div`
 `;
 
 const BalanceButton = styled.button`
-  padding: 1rem 2rem;
+  padding: 1rem 1.5rem;
   border: 2px solid ${props => props.selected ? '#ffc62d' : '#333'};
   background: ${props => props.selected ? '#ffc62d' : 'transparent'};
   color: ${props => props.selected ? '#000' : '#fff'};
@@ -73,17 +73,23 @@ const BalanceButton = styled.button`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  font-size: 1.2rem;
+  font-size: 1rem;
   flex: 1;
-  min-width: 200px;
+  min-width: 150px;
+  max-width: 180px;
+  white-space: nowrap;
   
   @media (max-width: 768px) {
     min-width: unset;
-    width: 32%;
+    max-width: unset;
+    flex: 1 1 calc(50% - 0.5rem);
     padding: 0.5rem;
-    font-size: 0.75rem;
-    white-space: nowrap;
+    font-size: 0.7rem;
     border-width: 1px;
+    
+    &:nth-child(5) {
+      flex: 1 1 100%;
+    }
   }
 `;
 
@@ -327,11 +333,14 @@ function App() {
 
   const calculateValues = (balance) => {
     return {
-      maxDailyLoss: balance * 0.06,
-      maxLoss: balance * 0.12,
+      maxDailyLoss: balance * 0.10,
+      maxLoss: balance * 0.15,
       profitTargetStep1: balance * 0.10,
       profitTargetStep2: balance * 0.05,
-      refundableFee: balance === 50000 ? 400 : balance === 100000 ? 600 : 999
+      oneTimePrice: balance === 10000 ? 99 : 
+                    balance === 25000 ? 249 : 
+                    balance === 50000 ? 399 : 
+                    balance === 100000 ? 599 : 1199
     };
   };
 
@@ -343,7 +352,7 @@ function App() {
           
           <SectionHeader>BALANCE</SectionHeader>
           <BalanceSection>
-            {[50000, 100000, 200000].map(balance => (
+            {[10000, 25000, 50000, 100000, 200000].map(balance => (
               <BalanceButton
                 key={balance}
                 selected={selectedBalance === balance}
@@ -378,16 +387,16 @@ function App() {
 
             <TableRow>
               <div>Maximum Daily Loss</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (6%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
+              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
             </TableRow>
 
             <TableRow>
               <div>Maximum Loss</div>
-              <div>${values.maxLoss.toLocaleString()} (12%)</div>
-              <div>${values.maxLoss.toLocaleString()} (12%)</div>
-              <div>${values.maxLoss.toLocaleString()} (12%)</div>
+              <div>${values.maxLoss.toLocaleString()} (15%)</div>
+              <div>${values.maxLoss.toLocaleString()} (15%)</div>
+              <div>${values.maxLoss.toLocaleString()} (15%)</div>
             </TableRow>
 
             <TableRow>
@@ -412,10 +421,10 @@ function App() {
             </TableRow>
 
             <TableRow>
-              <div>Refundable Fee</div>
-              <HighlightedCell>${values.refundableFee}</HighlightedCell>
-              <div>Free</div>
               <div>Refund</div>
+              <div>-</div>
+              <div>-</div>
+              <HighlightedCell>Yes 100%</HighlightedCell>
             </TableRow>
           </Table>
 

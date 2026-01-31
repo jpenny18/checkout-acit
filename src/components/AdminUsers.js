@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { Download, Edit, Trash2, Users } from 'lucide-react';
+import { Download, Edit, Trash2, Users, Copy, Mail } from 'lucide-react';
 
 const Container = styled.div`
   padding: 1rem;
@@ -263,11 +263,46 @@ const Input = styled.input`
   }
 `;
 
+const SuccessMessage = styled.div`
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: #4caf50;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  animation: slideIn 0.3s ease-out;
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(400px);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+`;
+
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState('');
   const [editingUser, setEditingUser] = useState(null);
+  const [showCopySuccess, setShowCopySuccess] = useState(false);
   const [stats, setStats] = useState({
     total: 0,
     activeThisMonth: 0,
@@ -372,6 +407,22 @@ const AdminUsers = () => {
     }
   };
 
+  const handleCopyEmails = async () => {
+    try {
+      const emails = users
+        .map(user => user.email)
+        .filter(email => email) // Filter out any undefined/null emails
+        .join(', ');
+      
+      await navigator.clipboard.writeText(emails);
+      setShowCopySuccess(true);
+      setTimeout(() => setShowCopySuccess(false), 3000);
+    } catch (error) {
+      console.error('Error copying emails:', error);
+      alert('Error copying emails. Please try again.');
+    }
+  };
+
   const handleExportCSV = () => {
     const headers = ['Email', 'First Name', 'Last Name', 'Phone', 'Created At'];
     const csvData = users.map(user => [
@@ -411,6 +462,13 @@ const AdminUsers = () => {
 
   return (
     <Container>
+      {showCopySuccess && (
+        <SuccessMessage>
+          <Copy size={20} />
+          <span>{users.length} email addresses copied to clipboard! Ready to paste into BCC field.</span>
+        </SuccessMessage>
+      )}
+      
       <StatsGrid>
         <StatCard>
           <h3>Total Users</h3>
@@ -437,6 +495,14 @@ const AdminUsers = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <Button variant="primary" onClick={handleCopyEmails}>
+            <Copy size={18} />
+            Copy All Emails for BCC
+          </Button>
+          <Button variant="primary" onClick={handleExportCSV}>
+            <Download size={18} />
+            Export CSV
+          </Button>
           <Button
             variant="danger"
             onClick={handleBulkDelete}
@@ -444,10 +510,6 @@ const AdminUsers = () => {
           >
             <Trash2 size={18} />
             Delete Selected ({selectedUsers.size})
-          </Button>
-          <Button variant="primary" onClick={handleExportCSV}>
-            <Download size={18} />
-            Export CSV
           </Button>
         </div>
       </ActionsBar>

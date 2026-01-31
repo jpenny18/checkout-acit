@@ -309,10 +309,10 @@ const SupportPage = () => {
           <Mail />
           <EmailText>
             <EmailLabel>Email Support</EmailLabel>
-            <EmailAddress>support@ascendantcapital.ca</EmailAddress>
+            <EmailAddress>support@acitrading.ca</EmailAddress>
           </EmailText>
         </EmailSection>
-        <EmailButton href="mailto:support@ascendantcapital.ca">
+        <EmailButton href="mailto:support@acitrading.ca">
           Send Email
           <Mail />
         </EmailButton>
