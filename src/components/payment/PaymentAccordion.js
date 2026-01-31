@@ -97,7 +97,6 @@ const PaymentAccordion = ({
   discountCode
 }) => {
   const [activeMethod, setActiveMethod] = useState('card');
-  const [loading, setLoading] = useState(false);
 
   // Get the appropriate one-time price for the selected balance
   const getOneTimePrice = () => {

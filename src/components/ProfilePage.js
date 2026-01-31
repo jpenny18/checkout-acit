@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { auth, db } from '../firebase';
-import { updatePassword, updateEmail } from 'firebase/auth';
+import { updatePassword } from 'firebase/auth';
 import { doc, getDoc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 const ProfileContainer = styled.div`

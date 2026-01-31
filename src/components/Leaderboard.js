@@ -183,6 +183,7 @@ const TraderInfo = styled.div`
   margin-bottom: 1rem;
 `;
 
+/* Commented out - not currently used
 const Medal = styled.div`
   width: ${props => props.rank === 1 ? '64px' : '48px'};
   height: ${props => props.rank === 1 ? '64px' : '48px'};
@@ -197,6 +198,7 @@ const Medal = styled.div`
     font-size: 1.5rem;
   }
 `;
+*/
 
 const TraderDetails = styled.div`
   flex: 1;
@@ -347,6 +349,7 @@ const TableRow = styled.div`
   }
 `;
 
+/* Commented out - not currently used
 const CountryFlag = styled.img`
   width: 20px;
   height: 20px;
@@ -354,6 +357,7 @@ const CountryFlag = styled.img`
   object-fit: cover;
   margin-right: 0.5rem;
 `;
+*/
 
 const GainText = styled.span`
   color: #00ff9d;

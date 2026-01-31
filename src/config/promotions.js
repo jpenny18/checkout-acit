@@ -77,10 +77,12 @@ export const getCachedCryptoDiscountMultiplier = () => {
   return 1; // Always return 1 (no discount)
 };
 
-export default {
+const promotions = {
   fetchPromotions,
   getCryptoDiscountMultiplier,
   getCryptoDiscountPercentage,
   getCachedCryptoDiscountPercentage,
   getCachedCryptoDiscountMultiplier
-}; 
+};
+
+export default promotions; 

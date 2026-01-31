@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import cryptoPaymentService, { simulatePayment } from '../services/cryptoPayment';
 import { db } from '../firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { getCachedCryptoDiscountPercentage } from '../config/promotions';
+// import { getCachedCryptoDiscountPercentage } from '../config/promotions'; // Commented out - not currently used
 
 const Container = styled.div`
   background-color: #1a1a1a;
@@ -164,6 +164,7 @@ const PaymentSentButton = styled.button`
   }
 `;
 
+/* Commented out - not currently used
 const DiscountBadge = styled.div`
   background: rgba(255, 198, 45, 0.2);
   color: #ffc62d;
@@ -173,6 +174,7 @@ const DiscountBadge = styled.div`
   margin-bottom: 1rem;
   font-size: 0.9rem;
 `;
+*/
 
 const PriceInfo = styled.div`
   text-align: center;
@@ -240,10 +242,8 @@ function CryptoPayment({ amount, onBack, orderId }) {
   const [error, setError] = useState(null);
   const [copiedAddress, setCopiedAddress] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('pending');
-  const [selectedCrypto, setSelectedCrypto] = useState('');
-  const [cryptoAmount, setCryptoAmount] = useState('');
+  const [selectedCrypto] = useState('');
   const [isInitializing, setIsInitializing] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Update initialization effect timing
   useEffect(() => {
@@ -267,12 +267,12 @@ function CryptoPayment({ amount, onBack, orderId }) {
     const initializeService = async () => {
       try {
         await cryptoPaymentService.initialize();
-        const prices = await cryptoPaymentService.fetchPrices();
-        setPrices(prices);
-        setIsLoading(false);
+        const fetchedPrices = await cryptoPaymentService.fetchPrices();
+        setPrices(fetchedPrices);
+        setLoading(false);
       } catch (error) {
         console.log('Service initialized with limited functionality');
-        setIsLoading(false);
+        setLoading(false);
       }
     };
 
@@ -290,10 +290,9 @@ function CryptoPayment({ amount, onBack, orderId }) {
         const newPrices = await cryptoPaymentService.fetchPrices();
         setPrices(newPrices);
         if (selectedCrypto && amount) {
-          const amount = calculateCryptoAmount(selectedCrypto);
-          setCryptoAmount(amount);
+          const cryptoAmt = calculateCryptoAmount(selectedCrypto);
           const address = cryptoAddresses[selectedCrypto].address;
-          await cryptoPaymentService.startPaymentListener(orderId, address, selectedCrypto, amount);
+          await cryptoPaymentService.startPaymentListener(orderId, address, selectedCrypto, cryptoAmt);
         }
       } catch (error) {
         console.error('Error:', error);
@@ -368,12 +367,7 @@ function CryptoPayment({ amount, onBack, orderId }) {
     };
   }, [orderId, onBack, calculateCryptoAmount]);
 
-  useEffect(() => {
-    if (selectedCrypto && amount) {
-      const cryptoAmount = calculateCryptoAmount(selectedCrypto);
-      setCryptoAmount(cryptoAmount);
-    }
-  }, [selectedCrypto, amount, calculateCryptoAmount]);
+  // Removed useEffect for setCryptoAmount since it's not used in state anymore
 
   // Add test function
   const handleTestPayment = async () => {

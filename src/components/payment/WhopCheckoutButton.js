@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ExternalLink, Shield, Lock, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Lock } from 'lucide-react';
 
 const CheckoutContainer = styled.div`
   background-color: #2a2a2a;
@@ -40,6 +40,7 @@ const SecurePaymentBanner = styled.div`
   }
 `;
 
+/* Commented out - not currently used
 const InfoText = styled.p`
   color: #999;
   text-align: center;
@@ -51,6 +52,7 @@ const InfoText = styled.p`
     font-size: 0.78rem;
   }
 `;
+*/
 
 const DiscountNote = styled.div`
   background: rgba(50, 50, 50, 0.3);
@@ -115,6 +117,7 @@ const CheckoutButton = styled.a`
   }
 `;
 
+/* Commented out - not currently used
 const TrustBadgesContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -140,6 +143,7 @@ const TrustBadge = styled.div`
     color: #ffc62d;
   }
 `;
+*/
 
 const WhopCheckoutButton = ({ selectedBalance, amount, discountCode }) => {
   // Get the appropriate Whop checkout link based on account size

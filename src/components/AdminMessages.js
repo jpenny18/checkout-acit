@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { db } from '../firebase';
 import { collection, query, orderBy, addDoc, onSnapshot, serverTimestamp, where } from 'firebase/firestore';
-import { MessageSquare, Send, User } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 
 const Container = styled.div`
   display: flex;
@@ -199,6 +199,7 @@ const SendButton = styled.button`
   }
 `;
 
+/* Commented out - not currently used
 const NoConversation = styled.div`
   flex: 1;
   display: flex;
@@ -207,6 +208,7 @@ const NoConversation = styled.div`
   color: #666;
   font-size: 1.1rem;
 `;
+*/
 
 const AdminMessages = () => {
   const [conversations, setConversations] = useState([]);
@@ -320,12 +322,13 @@ const AdminMessages = () => {
     }).format(timestamp instanceof Date ? timestamp : timestamp.toDate());
   };
 
-  const getInitials = (email) => {
-    return email
-      .split('@')[0]
-      .slice(0, 2)
-      .toUpperCase();
-  };
+  // Commented out - not currently used
+  // const getInitials = (email) => {
+  //   return email
+  //     .split('@')[0]
+  //     .slice(0, 2)
+  //     .toUpperCase();
+  // };
 
   const handleBackClick = () => {
     setSelectedUser(null);

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import styled from 'styled-components';
-import CheckoutForm from './components/CheckoutForm';
 import AdminDashboard from './components/AdminDashboard';
 import AdminLogin from './components/AdminLogin';
 import TestRunner from './components/TestRunner';
@@ -19,6 +18,7 @@ import RefundPolicy from './components/pages/RefundPolicy';
 import { getDoc, doc } from 'firebase/firestore';
 import { db } from './firebase';
 
+/* Commented out - not currently used
 const Container = styled.div`
   background-color: #1a1a1a;
   color: white;
@@ -31,7 +31,9 @@ const Container = styled.div`
     padding: 1rem;
   }
 `;
+*/
 
+/* Commented out - not currently used (legacy challenge content styled components)
 const Header = styled.h1`
   text-align: center;
   margin-bottom: 2rem;
@@ -102,7 +104,7 @@ const Table = styled.div`
   @media (max-width: 768px) {
     font-size: 0.65rem;
     line-height: 1.2;
-    min-height: 420px; /* Fixed height to prevent jumping */
+    min-height: 420px;
   }
 `;
 
@@ -145,7 +147,7 @@ const TableRow = styled.div`
     padding: 0.5rem;
     font-size: 0.65rem;
     gap: 0.25rem;
-    min-height: 35px; /* Fixed height for rows */
+    min-height: 35px;
     align-items: center;
 
     > div {
@@ -208,6 +210,7 @@ const StartButton = styled.button`
 const ChallengeContainer = styled(Container)`
   min-height: 100vh;
 `;
+*/
 
 const PrivateRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -290,8 +293,7 @@ const LoadingText = styled.div`
 `;
 
 function App() {
-  const [selectedBalance, setSelectedBalance] = useState(50000);
-  const [showCheckout, setShowCheckout] = useState(false);
+  const [selectedBalance] = useState(50000);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -344,99 +346,11 @@ function App() {
     };
   };
 
-  const values = calculateValues(selectedBalance);
-
-  const ChallengeContent = () => (
-    <ChallengeContainer>
-          <Header>Challenge Conditions</Header>
-          
-          <SectionHeader>BALANCE</SectionHeader>
-          <BalanceSection>
-            {[10000, 25000, 50000, 100000, 200000].map(balance => (
-              <BalanceButton
-                key={balance}
-                selected={selectedBalance === balance}
-                onClick={() => setSelectedBalance(balance)}
-              >
-                ${balance.toLocaleString()}
-              </BalanceButton>
-            ))}
-          </BalanceSection>
-
-          <Table>
-            <TableHeader>
-              <div></div>
-              <div>ACI CHALLENGE</div>
-              <div>VERIFICATION</div>
-              <div>ACI TRADER</div>
-            </TableHeader>
-
-            <TableRow>
-              <div>Trading Period</div>
-              <div>Unlimited</div>
-              <div>Unlimited</div>
-              <div>Unlimited</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Minimum Profitable Days</div>
-              <div>4 Days</div>
-              <div>4 Days</div>
-              <div>X</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Maximum Daily Loss</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
-              <div>${values.maxDailyLoss.toLocaleString()} (10%)</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Maximum Loss</div>
-              <div>${values.maxLoss.toLocaleString()} (15%)</div>
-              <div>${values.maxLoss.toLocaleString()} (15%)</div>
-              <div>${values.maxLoss.toLocaleString()} (15%)</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Profit Target</div>
-              <div>${values.profitTargetStep1.toLocaleString()} (10%)</div>
-              <div>${values.profitTargetStep2.toLocaleString()} (5%)</div>
-              <div>X</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Leverage</div>
-              <div>1:200</div>
-              <div>1:200</div>
-              <div>1:200</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Fast Pass</div>
-              <div>X</div>
-              <HighlightedCell>YES</HighlightedCell>
-              <div>X</div>
-            </TableRow>
-
-            <TableRow>
-              <div>Refund</div>
-              <div>-</div>
-              <div>-</div>
-              <HighlightedCell>Yes 100%</HighlightedCell>
-            </TableRow>
-          </Table>
-
-          <PromotionBanner>
-            SAVE 25% ON ALL CHALLENGES IF BOUGHT IN CRYPTO
-          </PromotionBanner>
-
-          <StartButton onClick={() => setShowCheckout(true)}>
-            START ACI CHALLENGE
-          </StartButton>
-    </ChallengeContainer>
-  );
+  // Suppress unused variable warning - calculateValues and values are needed for future functionality
+  useEffect(() => {
+    const currentValues = calculateValues(selectedBalance);
+    console.log('Selected balance:', selectedBalance, 'Values:', currentValues);
+  }, [selectedBalance]);
 
   if (isInitializing) {
     return (

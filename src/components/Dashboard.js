@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Link, Routes, Route } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { Trophy, Users, Download, MessageSquare, User, LogOut, Award, Wallet, BarChart2, HelpCircle, MessageCircle } from 'lucide-react';
-import Button from './Button';
+import { Trophy, User, LogOut, Award, Wallet, BarChart2, HelpCircle, MessageCircle } from 'lucide-react';
+// import Button from './Button'; // Commented out - not currently used
 import CheckoutForm from './CheckoutForm';
 import ProfilePage from './ProfilePage';
 import SupportPage from './SupportPage';
@@ -194,10 +194,12 @@ const LogoutButton = styled.button`
   }
 `;
 
+/* Commented out - not currently used
 const CheckoutSection = styled.div`
   max-width: 1200px;
   margin: 0 auto;
 `;
+*/
 
 const ChallengeContainer = styled.div`
   background-color: #1a1a1a;

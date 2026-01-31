@@ -83,7 +83,7 @@ const stripeAPI = {
         throw new Error('Failed to cancel subscription');
       }
 
-      const result = await response.json();
+      // const result = await response.json(); // Commented out - not currently used
       
       return {
         success: true,

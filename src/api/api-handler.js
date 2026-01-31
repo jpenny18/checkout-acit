@@ -1,4 +1,4 @@
-import stripeAPI from './stripe-api';
+// import stripeAPI from './stripe-api'; // Commented out - not currently used
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import Stripe from 'stripe';
@@ -133,6 +133,10 @@ const endpoints = {
           
         case 'invoice.payment_failed':
           await handlePaymentFailed(event.data.object);
+          break;
+          
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
           break;
       }
       
@@ -286,6 +290,8 @@ export const initApiHandler = () => {
   console.log('API handler initialized');
 };
 
-export default {
+const apiHandler = {
   initApiHandler
-}; 
+};
+
+export default apiHandler; 

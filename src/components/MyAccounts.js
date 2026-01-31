@@ -160,6 +160,7 @@ const TableHeader = styled.div`
   color: #999;
 `;
 
+/* Commented out - not currently used
 const TableRow = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -171,6 +172,7 @@ const TableRow = styled.div`
     border-bottom: none;
   }
 `;
+*/
 
 // Sample data for the chart
 const chartData = [

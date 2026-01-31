@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { db } from '../firebase';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { Download, Edit, Trash2, Users, Copy, Mail } from 'lucide-react';
+import { Download, Edit, Trash2, Copy } from 'lucide-react';
 
 const Container = styled.div`
   padding: 1rem;

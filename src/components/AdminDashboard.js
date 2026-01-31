@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { db, auth } from '../firebase';
 import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc, getDoc } from 'firebase/firestore';
@@ -119,12 +119,6 @@ const FastPassBadge = styled.span`
   font-size: 0.9rem;
 `;
 
-const TransactionDetails = styled.div`
-  font-size: 0.9rem;
-  color: #999;
-  margin-top: 0.5rem;
-`;
-
 const TransactionHash = styled.a`
   color: #ffc62d;
   text-decoration: none;
@@ -226,6 +220,18 @@ function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('orders');
   const navigate = useNavigate();
 
+  const handleLogout = useCallback(async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem('adminLoggedIn');
+      localStorage.removeItem('adminUid');
+      onLogout();
+      navigate('/admin');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  }, [onLogout, navigate]);
+
   useEffect(() => {
     const checkAdminStatus = async () => {
       const user = auth.currentUser;
@@ -248,7 +254,7 @@ function AdminDashboard({ onLogout }) {
     };
 
     checkAdminStatus();
-  }, []);
+  }, [handleLogout]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -265,18 +271,6 @@ function AdminDashboard({ onLogout }) {
 
     return () => unsubscribe();
   }, [isAdmin]);
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem('adminLoggedIn');
-      localStorage.removeItem('adminUid');
-      onLogout();
-      navigate('/admin');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {

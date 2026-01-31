@@ -145,9 +145,11 @@ const DiscountDetails = styled.div`
   }
 `;
 
+/* Commented out - not currently used
 const PlatformSection = styled.div`
   margin: 2rem 0;
 `;
+*/
 
 const PlatformButtons = styled.div`
   display: grid;

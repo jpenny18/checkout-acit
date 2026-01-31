@@ -5,7 +5,7 @@ import Button from './Button';
 import Footer from './Footer';
 import Globe from './Globe';
 import { Link } from 'react-router-dom';
-import { getCachedCryptoDiscountPercentage } from '../config/promotions';
+// import { getCachedCryptoDiscountPercentage } from '../config/promotions'; // Commented out - not currently used
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -993,12 +993,14 @@ const PromotionBanner = styled.div`
   }
 `;
 
+/* Commented out - not currently used
 const HeroButton = styled(Button)`
   @media (max-width: 768px) {
     padding: 0.75rem 1.5rem;
     font-size: 0.9rem;
   }
 `;
+*/
 
 const StartButton = styled(Button)`
   width: 100%;
