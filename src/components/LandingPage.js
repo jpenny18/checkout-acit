@@ -5,6 +5,7 @@ import Button from './Button';
 import Footer from './Footer';
 import Globe from './Globe';
 import { Link } from 'react-router-dom';
+import CheckoutForm from './CheckoutForm';
 // import { getCachedCryptoDiscountPercentage } from '../config/promotions'; // Commented out - not currently used
 
 const GlobalStyle = createGlobalStyle`
@@ -12,6 +13,16 @@ const GlobalStyle = createGlobalStyle`
     overflow-x: hidden;
     width: 100%;
     position: relative;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 `;
 
@@ -745,6 +756,23 @@ const ChallengeSection = styled.section`
   background: #1a1a1a;
   position: relative;
   margin-bottom: -4rem;
+  transition: background-color 0.3s ease;
+
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: inset 0 0 0px rgba(255, 198, 45, 0);
+    }
+    50% {
+      box-shadow: inset 0 0 50px rgba(255, 198, 45, 0.1);
+    }
+    100% {
+      box-shadow: inset 0 0 0px rgba(255, 198, 45, 0);
+    }
+  }
+
+  &.scroll-highlight {
+    animation: pulseGlow 1.5s ease-in-out;
+  }
 
   @media (max-width: 1024px) {
     padding: 6rem 2rem 10rem;
@@ -1838,6 +1866,7 @@ const LandingPage = () => {
   const [openFAQ, setOpenFAQ] = useState(null);
   const [hasTableScroll, setHasTableScroll] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const tableRef = useRef(null);
   const [expandedReviews, setExpandedReviews] = useState({});
 
@@ -1853,6 +1882,13 @@ const LandingPage = () => {
   });
 
   const values = calculateValues(selectedBalance);
+
+  // Scroll to top when checkout is shown
+  useEffect(() => {
+    if (showCheckout) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showCheckout]);
 
   useEffect(() => {
     const checkScroll = () => {
@@ -1885,6 +1921,26 @@ const LandingPage = () => {
         top: y,
         behavior: 'smooth'
       });
+    }
+  };
+
+  const scrollToPricing = () => {
+    const pricingSection = document.getElementById('accounts');
+    if (pricingSection) {
+      const yOffset = -100; // Offset to account for any fixed headers
+      const y = pricingSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+      
+      // Add highlight animation after scroll
+      setTimeout(() => {
+        pricingSection.classList.add('scroll-highlight');
+        setTimeout(() => {
+          pricingSection.classList.remove('scroll-highlight');
+        }, 1500);
+      }, 500);
     }
   };
 
@@ -1966,6 +2022,20 @@ const LandingPage = () => {
     }));
   };
 
+  // If checkout is active, show only the checkout form
+  if (showCheckout) {
+    return (
+      <PageWrapper>
+        <GlobalStyle />
+        <CheckoutForm
+          selectedBalance={selectedBalance}
+          onBack={() => setShowCheckout(false)}
+          values={values}
+        />
+      </PageWrapper>
+    );
+  }
+
   return (
     <PageWrapper>
       <GlobalStyle />
@@ -2000,9 +2070,9 @@ const LandingPage = () => {
             <span>VDAY40</span>
           </DiscountCode>
           <PopupButton 
-            to="/auth?mode=signup" 
             onClick={() => {
               setShowPopup(false);
+              scrollToPricing();
               if (window.fbq) {
                 window.fbq('track', 'Lead', {
                   content_name: 'Claim Discount CTA - Popup',
@@ -2030,7 +2100,20 @@ const LandingPage = () => {
             <NavLink href="#faq">FAQ</NavLink>
           </NavLinks>
           <Button to="/auth?mode=login" variant="outline" size="small">LOGIN</Button>
-          <Button to="/auth?mode=signup" size="small">GET FUNDED</Button>
+          <Button 
+            size="small"
+            onClick={() => {
+              scrollToPricing();
+              if (window.fbq) {
+                window.fbq('track', 'Lead', {
+                  content_name: 'Get Funded CTA - Navigation',
+                  content_category: 'Landing Page'
+                });
+              }
+            }}
+          >
+            GET FUNDED
+          </Button>
           <MobileNav />
         </NavRight>
       </Navigation>
@@ -2084,9 +2167,9 @@ const LandingPage = () => {
               Become part of the most rapidly expanding prop trading firm, grow your capital to $4,000,000, and utilize advanced technology to enhance your trading success.
             </SubHeading>
             <Button 
-              to="/auth?mode=signup" 
               size="large"
               onClick={() => {
+                scrollToPricing();
                 if (window.fbq) {
                   window.fbq('track', 'Lead', {
                     content_name: 'Get Funded CTA - Hero',
@@ -2154,9 +2237,9 @@ const LandingPage = () => {
               Become part of the most rapidly expanding prop trading firm, grow your capital to $4,000,000, and utilize advanced technology to enhance your trading success.
             </SubHeading>
             <Button 
-              to="/auth?mode=signup" 
               size="large"
               onClick={() => {
+                scrollToPricing();
                 if (window.fbq) {
                   window.fbq('track', 'Lead', {
                     content_name: 'Get Funded CTA - Mobile Hero',
@@ -2309,8 +2392,8 @@ const LandingPage = () => {
           </PromotionBanner>
 
           <StartButton 
-            to="/auth?mode=signup"
             onClick={() => {
+              setShowCheckout(true);
               if (window.fbq) {
                 window.fbq('track', 'Lead', {
                   content_name: 'Start Challenge CTA',
@@ -2517,9 +2600,9 @@ const LandingPage = () => {
             </FAQCard>
           </FAQGrid>
           <FAQButton 
-            to="/auth?mode=signup" 
             size="large"
             onClick={() => {
+              scrollToPricing();
               if (window.fbq) {
                 window.fbq('track', 'Lead', {
                   content_name: 'Earn Funding CTA - FAQ',

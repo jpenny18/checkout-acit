@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { db } from '../firebase';
-import { collection, query, orderBy, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { Download, Edit, Trash2, Copy } from 'lucide-react';
 
 const Container = styled.div`
@@ -308,39 +308,85 @@ const AdminUsers = () => {
     activeThisMonth: 0,
     newThisMonth: 0
   });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+    console.log('AdminUsers: Setting up users listener...');
+    console.log('AdminUsers: Firebase config check - db instance:', db ? 'exists' : 'missing');
     
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const userData = [];
-      let activeThisMonth = 0;
-      let newThisMonth = 0;
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    setIsLoading(true);
+    setError(null);
+    
+    // Query without orderBy to avoid index requirement - we'll sort on client side
+    const usersRef = collection(db, 'users');
+    console.log('AdminUsers: Users collection reference created');
+    
+    const unsubscribe = onSnapshot(
+      usersRef, 
+      (snapshot) => {
+        console.log('AdminUsers: Received snapshot with', snapshot.size, 'documents');
+        setIsLoading(false);
+        
+        const userData = [];
+        let activeThisMonth = 0;
+        let newThisMonth = 0;
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      snapshot.forEach((doc) => {
-        const data = { id: doc.id, ...doc.data() };
-        userData.push(data);
+        snapshot.forEach((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+          userData.push(data);
+          console.log('AdminUsers: User data:', { id: doc.id, email: data.email, createdAt: data.createdAt });
 
-        // Calculate stats
-        if (data.lastActive && data.lastActive.toDate() > thirtyDaysAgo) {
-          activeThisMonth++;
-        }
-        if (data.createdAt && data.createdAt.toDate() > thirtyDaysAgo) {
-          newThisMonth++;
-        }
-      });
+          // Calculate stats
+          try {
+            if (data.lastActive) {
+              const lastActiveDate = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
+              if (lastActiveDate > thirtyDaysAgo) {
+                activeThisMonth++;
+              }
+            }
+            if (data.createdAt) {
+              const createdAtDate = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+              if (createdAtDate > thirtyDaysAgo) {
+                newThisMonth++;
+              }
+            }
+          } catch (err) {
+            console.error('AdminUsers: Error processing user stats:', err, data);
+          }
+        });
 
-      setUsers(userData);
-      setStats({
-        total: userData.length,
-        activeThisMonth,
-        newThisMonth
-      });
-    });
+        // Sort by createdAt on the client side (most recent first)
+        userData.sort((a, b) => {
+          const aDate = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0);
+          const bDate = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
+          return bDate - aDate;
+        });
 
-    return () => unsubscribe();
+        console.log('AdminUsers: Setting users state with', userData.length, 'users');
+        setUsers(userData);
+        setStats({
+          total: userData.length,
+          activeThisMonth,
+          newThisMonth
+        });
+      },
+      (error) => {
+        console.error('AdminUsers: Error fetching users:', error);
+        console.error('AdminUsers: Error code:', error.code);
+        console.error('AdminUsers: Error message:', error.message);
+        console.error('AdminUsers: Full error object:', JSON.stringify(error, null, 2));
+        setIsLoading(false);
+        setError(`Error loading users: ${error.message}`);
+      }
+    );
+
+    return () => {
+      console.log('AdminUsers: Cleaning up users listener');
+      unsubscribe();
+    };
   }, []);
 
   const handleSelectAll = (e) => {
@@ -451,7 +497,14 @@ const AdminUsers = () => {
 
   const formatDate = (timestamp) => {
     if (!timestamp) return 'N/A';
-    return timestamp.toDate().toLocaleString();
+    try {
+      // Handle both Firestore Timestamp and regular Date objects
+      const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return date.toLocaleString();
+    } catch (error) {
+      console.error('Error formatting date:', error, timestamp);
+      return 'Invalid Date';
+    }
   };
 
   const filteredUsers = users.filter(user => 
@@ -459,6 +512,31 @@ const AdminUsers = () => {
     user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (isLoading) {
+    return (
+      <Container>
+        <div style={{ textAlign: 'center', padding: '4rem', color: '#999' }}>
+          <div style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>Loading users...</div>
+          <div style={{ fontSize: '0.9rem' }}>Please wait while we fetch user data from Firebase.</div>
+        </div>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <div style={{ textAlign: 'center', padding: '4rem', color: '#ff4444' }}>
+          <div style={{ marginBottom: '1rem', fontSize: '1.2rem' }}>Error Loading Users</div>
+          <div style={{ fontSize: '0.9rem', marginBottom: '1rem' }}>{error}</div>
+          <div style={{ fontSize: '0.85rem', color: '#999' }}>
+            Please check the browser console for more details and verify your Firebase configuration.
+          </div>
+        </div>
+      </Container>
+    );
+  }
 
   return (
     <Container>

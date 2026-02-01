@@ -169,17 +169,23 @@ const Auth = () => {
 
     try {
       if (isSignIn) {
+        console.log('Auth: Signing in user with email:', email);
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log('Auth: User signed in with UID:', userCredential.user.uid);
         
         // Update lastActive timestamp on sign in
         try {
           const userDocRef = doc(db, 'users', userCredential.user.uid);
+          console.log('Auth: Updating lastActive timestamp for user');
           await setDoc(userDocRef, {
-            lastActive: new Date()
+            lastActive: new Date(),
+            email: email // Ensure email is set
           }, { merge: true });
+          console.log('Auth: User document updated successfully');
         } catch (firestoreError) {
+          console.error('Auth: Error updating user document, creating new one:', firestoreError);
           // If user document doesn't exist in Firestore yet, create it
-          await setDoc(doc(db, 'users', userCredential.user.uid), {
+          const newUserData = {
             email: email,
             firstName: '',
             lastName: '',
@@ -187,19 +193,24 @@ const Auth = () => {
             createdAt: new Date(),
             lastActive: new Date(),
             role: 'user'
-          });
+          };
+          console.log('Auth: Creating new user document:', newUserData);
+          await setDoc(doc(db, 'users', userCredential.user.uid), newUserData);
+          console.log('Auth: New user document created successfully');
         }
       } else {
         const name = e.target.name.value;
         const phone = e.target.phone.value;
+        console.log('Auth: Creating new user with email:', email);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('Auth: User created in Firebase Auth with UID:', userCredential.user.uid);
         
         // Store user data in Firestore
         const nameParts = name.split(' ');
         const firstName = nameParts[0] || '';
         const lastName = nameParts.slice(1).join(' ') || '';
         
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
+        const userData = {
           email: email,
           firstName: firstName,
           lastName: lastName,
@@ -207,10 +218,18 @@ const Auth = () => {
           createdAt: new Date(),
           lastActive: new Date(),
           role: 'user'
-        });
+        };
+        
+        console.log('Auth: Saving user data to Firestore:', userData);
+        await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+        console.log('Auth: User data saved successfully to Firestore');
       }
       navigate('/dashboard');
     } catch (err) {
+      console.error('Auth: Error during authentication:', err);
+      console.error('Auth: Error code:', err.code);
+      console.error('Auth: Error message:', err.message);
+      
       // Display generic error messages instead of Firebase errors
       if (isSignIn) {
         setError('Email or password incorrect');
