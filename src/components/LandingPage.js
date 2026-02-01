@@ -1888,6 +1888,15 @@ const LandingPage = () => {
 
   const values = calculateValues(selectedBalance);
 
+  // Ensure body overflow is reset on mount (fixes mobile scroll issues)
+  useEffect(() => {
+    document.body.style.overflow = 'auto';
+    
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   // Scroll to top when checkout is shown
   useEffect(() => {
     if (showCheckout) {

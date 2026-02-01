@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate, Link, Routes, Route } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
@@ -670,6 +670,26 @@ const Dashboard = () => {
   const [showCheckout, setShowCheckout] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeNav, setActiveNav] = useState('challenge');
+
+  // Ensure body overflow is reset on mount and when menu state changes
+  useEffect(() => {
+    // Reset body overflow on mount
+    document.body.style.overflow = 'auto';
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
+  // Handle body overflow when menu opens/closes
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [isMenuOpen]);
 
   const handleLogout = async () => {
     try {

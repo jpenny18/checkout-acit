@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
@@ -132,6 +132,13 @@ const AuthButtonAsButton = styled.button`
 
 const MobileNav = ({ scrollToPricing }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Cleanup body overflow on unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
