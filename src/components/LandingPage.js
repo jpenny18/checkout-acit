@@ -1999,7 +1999,19 @@ const LandingPage = () => {
             <p style={{ color: '#999', marginBottom: '0.5rem' }}>Use Code</p>
             <span>VDAY40</span>
           </DiscountCode>
-          <PopupButton to="/auth?mode=signup" onClick={() => setShowPopup(false)}>
+          <PopupButton 
+            to="/auth?mode=signup" 
+            onClick={() => {
+              setShowPopup(false);
+              if (window.fbq) {
+                window.fbq('track', 'Lead', {
+                  content_name: 'Claim Discount CTA - Popup',
+                  content_category: 'Landing Page',
+                  promotion_name: 'VDAY40'
+                });
+              }
+            }}
+          >
             CLAIM YOUR DISCOUNT NOW
           </PopupButton>
         </PopupContent>
@@ -2071,7 +2083,18 @@ const LandingPage = () => {
             <SubHeading>
               Become part of the most rapidly expanding prop trading firm, grow your capital to $4,000,000, and utilize advanced technology to enhance your trading success.
             </SubHeading>
-            <Button to="/auth?mode=signup" size="large">
+            <Button 
+              to="/auth?mode=signup" 
+              size="large"
+              onClick={() => {
+                if (window.fbq) {
+                  window.fbq('track', 'Lead', {
+                    content_name: 'Get Funded CTA - Hero',
+                    content_category: 'Landing Page'
+                  });
+                }
+              }}
+            >
               GET FUNDED TODAY
             </Button>
             <StarRating onClick={scrollToReviews}>
@@ -2130,7 +2153,18 @@ const LandingPage = () => {
             <SubHeading>
               Become part of the most rapidly expanding prop trading firm, grow your capital to $4,000,000, and utilize advanced technology to enhance your trading success.
             </SubHeading>
-            <Button to="/auth?mode=signup" size="large">
+            <Button 
+              to="/auth?mode=signup" 
+              size="large"
+              onClick={() => {
+                if (window.fbq) {
+                  window.fbq('track', 'Lead', {
+                    content_name: 'Get Funded CTA - Mobile Hero',
+                    content_category: 'Landing Page'
+                  });
+                }
+              }}
+            >
               GET FUNDED TODAY
             </Button>
             <StarRating onClick={scrollToReviews}>
@@ -2274,7 +2308,19 @@ const LandingPage = () => {
             ACI Traders qualify for our <a href="/once-funded-stay-funded">Once Funded Stay Funded Program!</a>
           </PromotionBanner>
 
-          <StartButton to="/auth?mode=signup">
+          <StartButton 
+            to="/auth?mode=signup"
+            onClick={() => {
+              if (window.fbq) {
+                window.fbq('track', 'Lead', {
+                  content_name: 'Start Challenge CTA',
+                  content_category: 'Landing Page',
+                  value: selectedBalance,
+                  currency: 'USD'
+                });
+              }
+            }}
+          >
             START ACI CHALLENGE
           </StartButton>
         </div>
@@ -2470,7 +2516,18 @@ const LandingPage = () => {
               </FAQAnswer>
             </FAQCard>
           </FAQGrid>
-          <FAQButton to="/auth?mode=signup" size="large">
+          <FAQButton 
+            to="/auth?mode=signup" 
+            size="large"
+            onClick={() => {
+              if (window.fbq) {
+                window.fbq('track', 'Lead', {
+                  content_name: 'Earn Funding CTA - FAQ',
+                  content_category: 'Landing Page'
+                });
+              }
+            }}
+          >
             EARN FUNDING
           </FAQButton>
         </Container>

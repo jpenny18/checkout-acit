@@ -98,6 +98,21 @@ const PaymentAccordion = ({
 }) => {
   const [activeMethod, setActiveMethod] = useState('card');
 
+  const handleMethodChange = (method) => {
+    setActiveMethod(method);
+    
+    // Track AddPaymentInfo event when user selects a payment method
+    if (window.fbq) {
+      window.fbq('track', 'AddPaymentInfo', {
+        content_name: `ACI Challenge - $${selectedBalance.toLocaleString()}`,
+        content_category: 'Trading Challenge',
+        value: discountedAmount || getOneTimePrice(),
+        currency: 'USD',
+        payment_type: method === 'card' ? 'Credit Card' : 'Cryptocurrency'
+      });
+    }
+  };
+
   // Get the appropriate one-time price for the selected balance
   const getOneTimePrice = () => {
     return discountedAmount || (selectedBalance === 10000 ? 99 :
@@ -111,7 +126,7 @@ const PaymentAccordion = ({
       <PaymentSection>
         <PaymentHeader 
           active={activeMethod === 'card'}
-          onClick={() => setActiveMethod('card')}
+          onClick={() => handleMethodChange('card')}
         >
           <RadioButton active={activeMethod === 'card'} />
           <PaymentMethod active={activeMethod === 'card'}>
@@ -130,7 +145,7 @@ const PaymentAccordion = ({
       <PaymentSection>
         <PaymentHeader 
           active={activeMethod === 'crypto'}
-          onClick={() => setActiveMethod('crypto')}
+          onClick={() => handleMethodChange('crypto')}
         >
           <RadioButton active={activeMethod === 'crypto'} />
           <PaymentMethod active={activeMethod === 'crypto'}>

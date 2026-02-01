@@ -138,6 +138,29 @@ const FooterText = styled.div`
 const PaymentSuccess = () => {
   const navigate = useNavigate();
 
+  // Track Purchase event when page loads
+  React.useEffect(() => {
+    if (window.fbq) {
+      // Get order details from URL params or local storage if available
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId') || 'unknown';
+      const value = urlParams.get('value') || 0;
+      const accountSize = urlParams.get('accountSize') || 0;
+
+      window.fbq('track', 'Purchase', {
+        content_name: `ACI Challenge - $${accountSize}`,
+        content_category: 'Trading Challenge',
+        value: parseFloat(value) || 0,
+        currency: 'USD',
+        order_id: orderId,
+        contents: [{
+          id: accountSize,
+          quantity: 1
+        }]
+      });
+    }
+  }, []);
+
   return (
     <PageContainer>
       <SuccessContainer>

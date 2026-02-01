@@ -1022,7 +1022,19 @@ const ChallengeContent = ({
           <span style={{textDecoration: 'underline', fontStyle: 'italic'}}>ACI Traders qualify for our <a href="/once-funded-stay-funded">Once Funded Stay Funded Program!</a></span>
         </PromotionBanner>
 
-        <StartButton onClick={() => setShowCheckout(true)}>
+        <StartButton 
+          onClick={() => {
+            setShowCheckout(true);
+            if (window.fbq) {
+              window.fbq('track', 'Lead', {
+                content_name: 'Start Challenge CTA - Dashboard',
+                content_category: 'Dashboard',
+                value: getOneTimePrice(selectedBalance),
+                currency: 'USD'
+              });
+            }
+          }}
+        >
           START ACI CHALLENGE
         </StartButton>
       </Card>

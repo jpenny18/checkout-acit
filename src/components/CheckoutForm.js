@@ -373,6 +373,20 @@ function CheckoutForm({ selectedBalance, onBack, values }) {
       return;
     }
 
+    // Track InitiateCheckout event
+    if (window.fbq) {
+      window.fbq('track', 'InitiateCheckout', {
+        content_name: `ACI Challenge - $${selectedBalance.toLocaleString()}`,
+        content_category: 'Trading Challenge',
+        value: getDiscountedPrice(),
+        currency: 'USD',
+        contents: [{
+          id: selectedBalance,
+          quantity: 1
+        }]
+      });
+    }
+
     setCurrentOrderId(orderId);
     setShowPaymentMethods(true);
   };

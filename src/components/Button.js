@@ -99,6 +99,7 @@ const Button = ({
         variant={variant}
         size={size}
         fullWidth={fullWidth}
+        onClick={onClick}
         {...props}
       >
         {children}
