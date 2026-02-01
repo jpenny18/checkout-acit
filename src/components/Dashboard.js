@@ -59,6 +59,9 @@ const DashboardContainer = styled.div`
 
   @media (max-width: 768px) {
     padding-top: 1rem;
+    flex-direction: column;
+    min-height: 100vh;
+    height: auto;
   }
 `;
 
@@ -119,8 +122,11 @@ const MainContent = styled.div`
   overflow-y: auto;
 
   @media (max-width: 768px) {
-    padding: 5rem 1rem 5rem;
+    padding: 5rem 1rem 10rem;
     width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    min-height: 100vh;
   }
 `;
 
@@ -211,6 +217,7 @@ const ChallengeContainer = styled.div`
 
   @media (max-width: 768px) {
     padding: 1rem;
+    min-height: auto;
   }
 `;
 
@@ -307,7 +314,8 @@ const Table = styled.div`
     font-size: 0.85rem;
     overflow-x: auto;
     background: #222;
-    min-height: 420px;
+    min-height: auto;
+    margin-bottom: 2rem;
     
     /* Webkit scrollbar styling */
     &::-webkit-scrollbar {

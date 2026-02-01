@@ -103,6 +103,7 @@ const AuthButton = styled(Link)`
   font-weight: 600;
   font-size: 1rem;
   transition: all 0.2s ease;
+  cursor: pointer;
 
   &:hover {
     background: ${props => props.variant === 'primary' ? '#e6b229' : 'rgba(255, 198, 45, 0.1)'};
@@ -110,7 +111,26 @@ const AuthButton = styled(Link)`
   }
 `;
 
-const MobileNav = () => {
+const AuthButtonAsButton = styled.button`
+  flex: 1;
+  background: ${props => props.variant === 'primary' ? '#ffc62d' : 'transparent'};
+  color: ${props => props.variant === 'primary' ? '#1a1a1a' : '#ffc62d'};
+  border: ${props => props.variant === 'primary' ? 'none' : '1px solid #ffc62d'};
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:hover {
+    background: ${props => props.variant === 'primary' ? '#e6b229' : 'rgba(255, 198, 45, 0.1)'};
+    color: ${props => props.variant === 'primary' ? '#1a1a1a' : '#ffc62d'};
+  }
+`;
+
+const MobileNav = ({ scrollToPricing }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -129,6 +149,20 @@ const MobileNav = () => {
       element.scrollIntoView({ behavior: 'smooth' });
       setIsOpen(false);
       document.body.style.overflow = 'auto';
+    }
+  };
+
+  const handleGetFunded = () => {
+    setIsOpen(false);
+    document.body.style.overflow = 'auto';
+    if (scrollToPricing) {
+      scrollToPricing();
+    }
+    if (window.fbq) {
+      window.fbq('track', 'Lead', {
+        content_name: 'Get Funded CTA - Mobile Navigation',
+        content_category: 'Landing Page'
+      });
     }
   };
 
@@ -172,9 +206,9 @@ const MobileNav = () => {
           <AuthButton to="/auth?mode=login">
             LOGIN
           </AuthButton>
-          <AuthButton to="/auth?mode=signup" variant="primary">
+          <AuthButtonAsButton onClick={handleGetFunded} variant="primary">
             GET FUNDED
-          </AuthButton>
+          </AuthButtonAsButton>
         </AuthButtons>
       </Navigation>
     </>

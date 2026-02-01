@@ -85,6 +85,11 @@ const NavRight = styled.div`
     > a {
       display: none;
     }
+
+    /* Hide GET FUNDED button on mobile static header */
+    .mobile-hide-cta {
+      display: none;
+    }
   }
 `;
 
@@ -788,11 +793,11 @@ const BalanceSection = styled.div`
   gap: 1rem;
   margin-bottom: 3rem;
   flex-wrap: wrap;
+  justify-content: center;
   
   @media (max-width: 768px) {
     gap: 0.75rem;
     margin-bottom: 2rem;
-    justify-content: center;
   }
 `;
 
@@ -2102,6 +2107,7 @@ const LandingPage = () => {
           <Button to="/auth?mode=login" variant="outline" size="small">LOGIN</Button>
           <Button 
             size="small"
+            className="mobile-hide-cta"
             onClick={() => {
               scrollToPricing();
               if (window.fbq) {
@@ -2114,7 +2120,7 @@ const LandingPage = () => {
           >
             GET FUNDED
           </Button>
-          <MobileNav />
+          <MobileNav scrollToPricing={scrollToPricing} />
         </NavRight>
       </Navigation>
       
